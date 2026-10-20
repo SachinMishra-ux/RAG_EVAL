@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+.deepeval/
+
+# Operating system files
+.DS_Store
+
+# Vector store binary data
+qdrant_storage/
+local_qdrant_storage/
+chunks_dump.json

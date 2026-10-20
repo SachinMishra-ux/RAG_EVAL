@@ -1,0 +1,62 @@
+[
+  {
+    "id": "g001",
+    "query": "What was JPMorgan Chase's full-year 2023 net income and revenue?",
+    "ideal_answer": "For full-year 2023, JPMorgan Chase & Co. reported record net income of $49.6 billion and total managed revenue of $162.4 billion, reflecting strong performance across lines of business and the acquisition of First Republic Bank.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g002",
+    "query": "What return on tangible common equity (ROTCE) did JPMorgan achieve in 2023?",
+    "ideal_answer": "JPMorgan Chase delivered a return on tangible common equity (ROTCE) of 21% in 2023, demonstrating robust profitability and capital efficiency.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g003",
+    "query": "What was the total deposit balance of JPMorgan at year-end 2023?",
+    "ideal_answer": "At year-end 2023, JPMorgan Chase held total deposits of approximately $2.4 trillion, remaining well-diversified across Consumer & Community Banking and Wholesale clients.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g004",
+    "query": "How did the Consumer & Community Banking (CCB) segment perform in 2023?",
+    "ideal_answer": "Consumer & Community Banking (CCB) performed strongly in 2023, generating net income of $21.2 billion and revenue of $70.1 billion, driven by higher net interest income on higher rates and solid growth in active customer accounts.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g005",
+    "query": "What was the impact of the First Republic Bank acquisition on JPMorgan's financial results?",
+    "ideal_answer": "The First Republic Bank transaction contributed substantially to earnings, adding approximately $4.1 billion of net income including the initial bargain purchase gain, along with accretive loan portfolios and wealth management relationships.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g006",
+    "query": "What is JPMorgan Chase's CET1 capital ratio at the end of 2023?",
+    "ideal_answer": "JPMorgan Chase ended 2023 with a Basel III Common Equity Tier 1 (CET1) capital ratio of 15.0%, maintaining an exceptionally strong capital buffer well above regulatory minimum requirements.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g007",
+    "query": "What was the total global revenue reported by EY (Ernst & Young) in their financial report?",
+    "ideal_answer": "EY reported record global revenues of nearly $50 billion for the fiscal year, with solid double-digit growth across its Assurance, Tax, Consulting, and Strategy & Transactions service lines.",
+    "source": "EY Financial Report"
+  },
+  {
+    "id": "g008",
+    "query": "What key geopolitical and macroeconomic risks did the CEO highlight in the annual letter to shareholders?",
+    "ideal_answer": "CEO Jamie Dimon highlighted significant ongoing risks including military conflicts in Ukraine and the Middle East, high inflationary pressures, record sovereign debt levels, quantitative tightening, and systemic geopolitical realignment.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g009",
+    "query": "How does JPMorgan invest in artificial intelligence and technology infrastructure?",
+    "ideal_answer": "JPMorgan invested over $15 billion annually in technology, expanding its cloud footprint, deploying machine learning across fraud prevention and risk management, and exploring generative AI tools across thousands of internal use cases.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  },
+  {
+    "id": "g010",
+    "query": "What was the provision for credit losses reported by JPMorgan Chase in 2023?",
+    "ideal_answer": "In 2023, JPMorgan Chase recognized a total provision for credit losses of $9.3 billion, reflecting net charge-offs in consumer credit card portfolios and prudent wholesale reserve builds.",
+    "source": "JPMorgan Chase Annual Report 2023"
+  }
+]
