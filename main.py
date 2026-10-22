@@ -24,8 +24,17 @@ Quick Commands:
 """
 
 import sys
+import warnings
 import argparse
 from dotenv import load_dotenv
+
+# Suppress internal LangSmith beta warning
+warnings.filterwarnings("ignore", message=".*Addressing runs with.*")
+try:
+    from langsmith._internal._beta_decorator import LangSmithBetaWarning
+    warnings.filterwarnings("ignore", category=LangSmithBetaWarning)
+except Exception:
+    pass
 
 load_dotenv()
 
@@ -33,45 +42,53 @@ load_dotenv()
 def cmd_query(args):
     from financial_rag.rag_pipeline import RagPipeline
     pipeline = RagPipeline(fetch_k=args.fetch_k, top_k=args.top_k)
-    print(f"\nQuerying Financial RAG: '{args.question}'...")
-    res = pipeline.invoke(args.question)
-    print("\n" + "=" * 60)
-    print("ANSWER:")
-    print(res["answer"])
-    print("=" * 60)
-    print(f"\nRetrieved {len(res['context'])} context chunk(s):")
-    for i, c in enumerate(res["context"], 1):
-        print(f"  [{i}] {c[:140]}...")
-    print()
+    try:
+        print(f"\nQuerying Financial RAG: '{args.question}'...")
+        res = pipeline.invoke(args.question)
+        print("\n" + "=" * 60)
+        print("ANSWER:")
+        print(res["answer"])
+        print("=" * 60)
+        print(f"\nRetrieved {len(res['context'])} context chunk(s):")
+        for i, c in enumerate(res["context"], 1):
+            print(f"  [{i}] {c[:140]}...")
+        print()
+    finally:
+        pipeline.close()
 
 
 def cmd_eval(args):
-    if args.retriever:
-        from evals import eval_retriever
+    if args.retriever_v1:
+        from evals.component import eval_retriever_v1
+        summary = eval_retriever_v1.run()
+        eval_retriever_v1.print_summary("Retriever V1", summary)
+        eval_retriever_v1.print_comparison(summary)
+    elif args.retriever:
+        from evals.component import eval_retriever
         eval_retriever.run()
     elif args.reranker:
-        from evals import eval_retriever_with_reranker
+        from evals.component import eval_retriever_with_reranker
         eval_retriever_with_reranker.run()
     elif args.generator:
-        from evals import eval_generator
+        from evals.component import eval_generator
         eval_generator.run()
     elif args.triad:
-        from evals import eval_rag_pipeline
+        from evals.pipeline import eval_rag_pipeline
         eval_rag_pipeline.run()
     elif args.app:
-        from evals import eval_application
+        from evals.application import eval_application
         eval_application.run()
     elif args.safety:
-        from evals import eval_safety
+        from evals.application import eval_safety
         eval_safety.run_safety(verbose=True)
     elif args.ops:
-        from evals import eval_ops
+        from evals.application import eval_ops
         eval_ops.run_ops(verbose=True)
     elif args.full:
         from evals import run_suite
         run_suite.main()
     else:
-        print("Please specify an evaluation module (e.g. --retriever, --triad, --safety, --ops, --full)")
+        print("Please specify an evaluation module (e.g. --retriever-v1, --retriever, --triad, --safety, --ops, --full)")
 
 
 def cmd_compare(args):
@@ -109,6 +126,7 @@ def main():
 
     # eval
     p_eval = subparsers.add_parser("eval", help="Run DeepEval evaluation modules")
+    p_eval.add_argument("--retriever-v1", action="store_true", help="Run Verified V1 retriever eval on PDF ground-truth")
     p_eval.add_argument("--retriever", action="store_true", help="Run retriever recall & precision eval")
     p_eval.add_argument("--reranker", action="store_true", help="Run cross-encoder reranker eval")
     p_eval.add_argument("--generator", action="store_true", help="Run isolated generator eval")

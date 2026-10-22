@@ -32,14 +32,9 @@ if str(ROOT) not in sys.path:
 load_dotenv()
 
 from financial_rag.rag_pipeline import RagPipeline
-from evals import (
-    eval_retriever,
-    eval_generator,
-    eval_rag_pipeline,
-    eval_application,
-    eval_safety,
-    eval_ops,
-)
+from evals.component import eval_retriever, eval_generator
+from evals.pipeline import eval_rag_pipeline
+from evals.application import eval_application, eval_safety, eval_ops
 from evals.metric_registry import rule_for
 
 BASELINE_PATH = os.path.join(ROOT, "baselines", "baseline.json")

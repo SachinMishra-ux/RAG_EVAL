@@ -24,8 +24,41 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct
 from langchain_core.documents import Document
 
+# Pre-import portalocker and patch QdrantLocal.close to avoid Python interpreter shutdown race conditions
+try:
+    import portalocker
+except ImportError:
+    pass
+
+try:
+    from qdrant_client.local.qdrant_local import QdrantLocal
+    _orig_qdrant_local_close = QdrantLocal.close
+
+    def _safe_qdrant_local_close(self, *args, **kwargs):
+        try:
+            _orig_qdrant_local_close(self, *args, **kwargs)
+        except (ImportError, TypeError, Exception):
+            pass
+
+    QdrantLocal.close = _safe_qdrant_local_close
+except Exception:
+    pass
+
 # Process-level client cache
 _PROCESS_CLIENTS = {}
+
+
+def _cleanup_process_clients():
+    """Closes all cached clients before Python interpreter teardown."""
+    for target_path, client in list(_PROCESS_CLIENTS.items()):
+        try:
+            client.close()
+        except Exception:
+            pass
+    _PROCESS_CLIENTS.clear()
+
+
+atexit.register(_cleanup_process_clients)
 
 
 class QdrantManager:
@@ -182,3 +215,11 @@ class QdrantManager:
             return [{"id": str(r.id), "payload": r.payload} for r in records]
         except Exception:
             return []
+
+    def close(self):
+        """Explicitly closes the Qdrant client connection."""
+        if self.client is not None:
+            try:
+                self.client.close()
+            except Exception:
+                pass

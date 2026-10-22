@@ -82,38 +82,50 @@ RAG_EVAL/
 │   ├── watcher.py               # Auto-ingestion daemon for new PDF reports
 │   └── s3_worker.py             # AWS S3 & SQS cloud event ingestion worker
 │
-├── goldens/                     # Curated & Synthetic Ground Truth Datasets
-│   ├── retriever_goldens.json   # Queries, ideal answers, and filing citations
-│   ├── retriever_deepeval_goldens.json # Draft synthetic goldens
-│   ├── faithfulness_dataset.json# Queries paired with verified ground truth context
-│   ├── correctness_goldens.json # Reference questions & answers for G-Eval Correctness
-│   ├── scope_goldens.json       # Scope adherence cases (ANSWER, DECLINE, PARTIAL)
-│   ├── leakage_goldens.json     # Adversarial prompt injection & PII extraction cases
-│   ├── toxicity_goldens.json    # Adversarial attacks, roleplay, and self-deprecation
+├── goldens/                     # Ground Truth Datasets (Organized by Evaluation Level)
+│   ├── component/               # Component-level evaluation datasets
+│   │   ├── retriever_goldens.json         # Base retriever queries and filing citations
+│   │   ├── retriever_goldens_v0.json      # Preserved baseline dataset (V0)
+│   │   ├── retriever_goldens_v1.json      # Verified high-accuracy PDF ground-truth dataset (V1)
+│   │   ├── retriever_deepeval_goldens.json# Synthesized draft goldens
+│   │   └── faithfulness_dataset.json      # Ground truth context chunks for isolated generator eval
+│   ├── pipeline/                # Pipeline-level live evaluation datasets
+│   │   └── correctness_goldens.json       # Reference questions & answers for RAG Triad / G-Eval
+│   ├── application/             # Application guardrail datasets
+│   │   ├── scope_goldens.json             # Scope adherence cases (ANSWER, DECLINE, PARTIAL)
+│   │   ├── leakage_goldens.json           # Adversarial prompt injection & PII extraction cases
+│   │   └── toxicity_goldens.json          # Adversarial attacks, roleplay, and toxicity checks
 │   ├── generate_goldens.py      # Synthesizer pipeline for drafting goldens
 │   └── export_chunks.py         # Utility to dump stored vector records to JSON
 │
-├── evals/                       # Comprehensive DeepEval Test Suite
-│   ├── __init__.py
-│   ├── llm_judge.py             # Multi-provider LLM Judge (OpenAI, Groq, Gemini)
-│   ├── harness.py               # Shared harness (load_goldens, summarize_by_metric)
+├── evals/                       # Hierarchical DeepEval Evaluation Test Suite
+│   ├── __init__.py              # Package init exporting all submodules and runners
+│   ├── llm_judge.py             # Multi-provider LLM Judge (Gemini 3.1 Flash-Lite, SenseNova, Groq)
+│   ├── harness.py               # Shared harness (smart path resolver, summarize_by_metric)
 │   ├── metric_registry.py       # Decision rules, directions, gates, and tolerances
-│   ├── eval_retriever.py        # Contextual Recall & Precision (Base Retriever)
-│   ├── eval_retriever_with_reranker.py # Retriever vs Cross-Encoder comparison
-│   ├── eval_generator.py        # Generator Faithfulness & Relevancy in ISOLATION
-│   ├── eval_rag_pipeline.py     # Live Pipeline RAG Triad evaluation
-│   ├── eval_application.py      # G-Eval Correctness, Completeness, and Financial Style
-│   ├── eval_scope_safety.py     # Scope Adherence evaluation
-│   ├── eval_leakage.py          # System Prompt & PII Leakage evaluation
-│   ├── eval_toxicity.py         # Toxicity evaluation
-│   ├── eval_safety.py           # Merged safety suite returning flat snapshot
-│   ├── eval_latency.py          # End-to-end & TTFT percentiles (p50/p95/p99) & SLOs
-│   ├── eval_cost.py             # Token breakdown, unit economics, budget gates
-│   ├── eval_reliability.py      # Request success, error, retry rates & backoff
-│   ├── eval_ops.py              # Merged operational suite returning flat snapshot
+│   ├── compare.py               # Automated regression engine (PASS=0, FAIL=1, REVIEW=2)
 │   ├── run_suite.py             # Master orchestrator generating versioned snapshots
-│   ├── compare.py               # Regression engine (PASS=0, FAIL=1, REVIEW=2)
-│   └── eval_online.py           # LangSmith continuous production trace monitor
+│   │
+│   ├── component/               # COMPONENT-LEVEL EVALUATIONS (Module Isolation)
+│   │   ├── eval_retriever.py              # Base retriever evaluation (Contextual Recall & Precision)
+│   │   ├── eval_retriever_v1.py           # Verified V1 retriever evaluation against PDF ground-truth
+│   │   ├── eval_retriever_with_reranker.py# Retriever vs Cross-Encoder comparison
+│   │   └── eval_generator.py              # Generator Faithfulness & Relevancy in ISOLATION
+│   │
+│   ├── pipeline/                # PIPELINE-LEVEL EVALUATIONS (Integrated RAG Chain)
+│   │   └── eval_rag_pipeline.py           # Live Pipeline RAG Triad (Relevancy, Faithfulness, Relevancy)
+│   │
+│   └── application/             # APPLICATION-LEVEL EVALUATIONS (Guardrails & Operations)
+│       ├── eval_application.py            # G-Eval Correctness, Completeness, and Financial Style
+│       ├── eval_scope_safety.py           # Scope Adherence evaluation
+│       ├── eval_leakage.py                # System Prompt & PII Leakage evaluation
+│       ├── eval_toxicity.py               # Toxicity evaluation
+│       ├── eval_safety.py                 # Merged safety suite returning flat snapshot
+│       ├── eval_latency.py                # End-to-end & TTFT percentiles (p50/p95/p99) & SLOs
+│       ├── eval_cost.py                   # Token breakdown, unit economics, budget gates
+│       ├── eval_reliability.py            # Request success, error, retry rates & backoff
+│       ├── eval_ops.py                    # Merged operational suite returning flat snapshot
+│       └── eval_online.py                 # LangSmith continuous production trace monitor
 │
 ├── resources/
 │   └── deepeval_intro.py        # DeepEval primer: test cases, metrics, evaluate()
@@ -206,25 +218,79 @@ python main.py api --port 8000
 
 In enterprise evaluation, **vibe testing is insufficient**. A high-quality golden dataset is required as a baseline truth.
 
-All datasets reside in `goldens/` following strict schemas:
+All datasets are hierarchically organized inside `goldens/` by evaluation level:
 
+#### 1. Component-Level Datasets (`goldens/component/`)
 | File | Purpose | Key Fields |
 |---|---|---|
-| `retriever_goldens.json` | Retriever recall & precision | `query`, `ideal_answer`, `source` |
-| `faithfulness_dataset.json` | Generator & triad evaluation | `query`, `ideal_context`, `source_sessions` |
-| `correctness_goldens.json` | Application-level truth & style | `question`, `ideal_answer`, `source` |
-| `scope_goldens.json` | Role adherence & refusal checks | `input`, `expected_action` (ANSWER/DECLINE/PARTIAL), `success_criteria` |
-| `leakage_goldens.json` | Security (Prompt injection / PII) | `input`, `subtype` (prompt/content/pii), `expected_action` |
-| `toxicity_goldens.json` | Resistance to toxic prompts | `input`, `case_type` (attack/benign), `technique` |
+| `retriever_goldens_v1.json` | **Verified V1 Dataset** grounded in actual PDF filings (Recall: 90%, Precision: 87%) | `id`, `query`, `ideal_answer`, `source`, `pdf_file` |
+| `retriever_goldens.json` / `_v0.json` | Baseline V0 reference dataset for regression tracking | `id`, `query`, `ideal_answer`, `source` |
+| `retriever_deepeval_goldens.json` | Auto-generated synthetic candidates from indexed chunks | `id`, `query`, `ideal_answer`, `source`, `context_sample` |
+| `faithfulness_dataset.json` | Ground-truth context chunks for isolated generator evaluation | `query`, `ideal_context`, `source_sessions` |
+
+#### 2. Pipeline-Level Datasets (`goldens/pipeline/`)
+| File | Purpose | Key Fields |
+|---|---|---|
+| `correctness_goldens.json` | Integrated RAG Triad & G-Eval Correctness reference truth | `question`, `ideal_answer`, `source` |
+
+#### 3. Application-Level Datasets (`goldens/application/`)
+| File | Purpose | Key Fields |
+|---|---|---|
+| `scope_goldens.json` | Role adherence & refusal checks (In-domain vs Out-of-domain) | `input`, `expected_action` (ANSWER/DECLINE/PARTIAL), `success_criteria` |
+| `leakage_goldens.json` | Security (Prompt extraction, raw database dump & PII extraction) | `input`, `subtype` (prompt/content/pii), `expected_action` |
+| `toxicity_goldens.json` | Resistance to toxic prompts, roleplay attacks, and hate speech | `input`, `case_type` (attack/benign), `technique` |
 
 ### Exporting Vectors & Generating Synthetics
 ```bash
 # Dump all stored vectors to inspect indexed content
 python goldens/export_chunks.py
 
-# Generate draft synthetic goldens using DeepEval Synthesizer
+# Generate draft synthetic goldens using LLM synthesis
 python goldens/generate_goldens.py
 ```
+
+#### Why `generate_goldens.py` is Required
+High-stakes financial filings (annual reports, 10-K disclosures) frequently exceed 300 pages. Manually authoring comprehensive test suites with factual ground truth, exact figures, and verified context attribution is time-consuming and difficult to scale. 
+
+`generate_goldens.py` solves this ground-truth data bottleneck by automating the benchmark creation process:
+1. **Context Extraction:** Automatically samples high-density financial text chunks across indexed filings (e.g., JPMorgan Chase, EY annual reports).
+2. **Structured LLM Synthesis:** Prompts the configured LLM engine to extract salient facts and formulate realistic financial analyst queries alongside verifiable, strictly grounded reference answers.
+3. **Artifact Generation:** Saves the generated evaluation records into `goldens/retriever_deepeval_goldens.json`.
+
+#### Output Dataset & Downstream Use Cases
+The script produces `goldens/retriever_deepeval_goldens.json` structured as:
+```json
+[
+  {
+    "id": "g_synth_001",
+    "query": "What was J.P. Morgan SE's return on equity (RoE) in 2023?",
+    "ideal_answer": "The return on equity (RoE) in 2023 was 6.8%.",
+    "source": "JPM_SE_Annual_2023.pdf",
+    "context_sample": "Profit after taxes under IFRS for the financial year 2023 amounted to € 1,684 million..."
+  }
+]
+```
+
+This synthetic dataset serves three essential downstream functions:
+- **Retriever Benchmarking (`eval_retriever.py`):** Supplies ground-truth query-document pairs to evaluate **Contextual Recall** (did the vector search find the necessary chunk?) and **Contextual Precision** (is the most relevant chunk ranked at top positions?).
+- **Faithfulness & Hallucination Testing (`eval_rag_pipeline.py`):** Provides verified ground-truth contexts to benchmark whether the generator introduces hallucinations or distorts reported financial figures.
+- **Continuous Corpus Expansion:** When new financial documents or quarterly earnings are added to `data/`, running this script instantly bootstraps a refreshed, aligned test suite without requiring manual annotation.
+
+#### ⚖️ Key Differences: `retriever_goldens.json` vs. `retriever_deepeval_goldens.json`
+
+| Dimension | `retriever_goldens.json` | `retriever_deepeval_goldens.json` |
+|---|---|---|
+| **Dataset Type** | **Curated Baseline (Gold Standard)** | **Automated Synthetic Dataset** |
+| **Authoring** | Manually curated & verified domain questions | Generated programmatically via `python goldens/generate_goldens.py` |
+| **Content Focus** | Core corporate KPIs (Net Income, ROTCE, CET1 ratio, acquisitions, revenue) | Granular factual queries dynamically extracted from sampled chunks |
+| **Schema** | `id`, `query`, `ideal_answer`, `source` | `id`, `query`, `ideal_answer`, `source`, `context_sample` |
+| **Pipeline Role** | Fixed reference benchmark for regression testing, CI/CD gates, and `python main.py compare` | Staging ground to rapidly bootstrap evaluation sets whenever new filings enter `data/` |
+| **Stability** | Static and version-controlled to ensure repeatable benchmarks over time | Dynamic and regenerable on demand |
+
+##### Promotion Workflow:
+1. When new financial PDFs (e.g. quarterly earnings releases) are ingested, run `python goldens/generate_goldens.py` to auto-generate `retriever_deepeval_goldens.json`.
+2. Inspect and validate the generated query-answer pairs.
+3. Promote high-value synthetic candidates into `retriever_goldens.json` to continuously expand the permanent evaluation suite.
 
 ---
 
@@ -232,26 +298,42 @@ python goldens/generate_goldens.py
 
 Component evaluation isolates retrieval from generation. If an answer fails, component evals identify whether the retriever missed the context or the generator hallucinated.
 
-### 1. Retriever Evaluation (Recall & Precision)
-Measures retrieval performance on `goldens/retriever_goldens.json`:
+### 1. Verified V1 Retriever Evaluation (Ground-Truth PDF Grounding)
+Measures retrieval performance on `goldens/component/retriever_goldens_v1.json`:
 - **Contextual Recall**: Did the retriever fetch all relevant information needed to answer the question?
 - **Contextual Precision**: Are the most relevant chunks ranked at the top of the context window?
 
+> [!TIP]
+> **Command Compatibility**: You can invoke evaluations either via the organized module paths (e.g. `python -m evals.component.eval_retriever_v1`), the legacy flat paths (e.g. `python -m evals.eval_retriever`), or via the master CLI (`python main.py eval`). Both forms are fully supported.
+
 ```bash
-python -m evals.eval_retriever
+# Run Verified V1 Retriever Eval (Recall: 90%+, Precision: 80%+)
+python -m evals.component.eval_retriever_v1
+
+# Or using the backward-compatible shortcut:
+python -m evals.eval_retriever_v1
+
+# Or via Master CLI
+python main.py eval --retriever-v1
 ```
 
-### 2. Retriever vs. Reranker Comparison
+### 2. Baseline Retriever Evaluation (V0 Benchmark)
+Evaluates on the legacy baseline dataset (`goldens/component/retriever_goldens.json`):
+```bash
+python -m evals.component.eval_retriever
+```
+
+### 3. Retriever vs. Reranker Comparison
 Demonstrates the empirical lift of adding a Cross-Encoder stage over pure vector search:
 ```bash
-python -m evals.eval_retriever_with_reranker
+python -m evals.component.eval_retriever_with_reranker
 ```
 
-### 3. Isolated Generator Evaluation (Faithfulness & Relevancy)
-Feeds **known-good ground truth context** (`ideal_context` from `faithfulness_dataset.json`) to the generator.
+### 4. Isolated Generator Evaluation (Faithfulness & Relevancy)
+Feeds **known-good ground truth context** (`ideal_context` from `goldens/component/faithfulness_dataset.json`) to the generator.
 - Because context is guaranteed to be complete and correct, any score drop is strictly due to generator hallucination or digression.
 ```bash
-python -m evals.eval_generator
+python -m evals.component.eval_generator
 ```
 
 ---
@@ -275,7 +357,7 @@ Evaluates the integrated pipeline on live runs across the three legs of the clas
 3. **Answer Relevancy**: Does the answer directly address the original question asked?
 
 ```bash
-python -m evals.eval_rag_pipeline
+python -m evals.pipeline.eval_rag_pipeline
 ```
 
 ---
@@ -289,7 +371,7 @@ Evaluates customer-facing output quality against human criteria using DeepEval's
 3. **Style (Reference-Free)**: Evaluates objective, analytical equity research tone and terminology. Penalizes hype, slang, or unsupported investment tips.
 
 ```bash
-python -m evals.eval_application
+python -m evals.application.eval_application
 ```
 
 ---
@@ -311,9 +393,15 @@ Financial applications must resist adversarial attacks, prompt extraction, and o
 ### 3. Toxicity Resistance (`eval_toxicity.py`)
 - Evaluates resistance against insulting prompts, abusive roleplay, style overrides, and self-deprecating bait using `ToxicityMetric`.
 
-### Run the Consolidated Safety Suite:
+### Run Safety Suite:
 ```bash
-python -m evals.eval_safety
+# Run the consolidated safety suite
+python -m evals.application.eval_safety
+
+# Or individual guardrails:
+python -m evals.application.eval_scope_safety
+python -m evals.application.eval_leakage
+python -m evals.application.eval_toxicity
 ```
 
 ---
@@ -340,9 +428,15 @@ A RAG system must be fast, economical, and stable in production. Operational eva
 - Measures request success rate, error rate, and retry rate.
 - Implements an exponential backoff retry wrapper to gracefully handle transient network or rate limit spikes.
 
-### Run the Consolidated Operations Suite:
+### Run Operations Suite:
 ```bash
-python -m evals.eval_ops
+# Run the consolidated operations suite
+python -m evals.application.eval_ops
+
+# Or individual benchmarks:
+python -m evals.application.eval_latency
+python -m evals.application.eval_cost
+python -m evals.application.eval_reliability
 ```
 
 ---
@@ -389,29 +483,47 @@ python -m evals.compare
 
 Offline evaluations with golden datasets must be paired with continuous online monitoring.
 
-`evals/eval_online.py` runs as a production background daemon:
+`evals/application/eval_online.py` runs as a production background daemon:
 1. Long-polls live execution traces from **LangSmith**.
 2. Deterministically samples traffic (default: 30%) to manage LLM judge costs.
 3. Evaluates sampled production turns against the **RAG Triad** (`Faithfulness`, `Answer Relevancy`, `Contextual Relevancy`).
 4. Logs feedback scores and natural language justifications back to the trace spans.
 
 ```bash
-python -m evals.eval_online
+python -m evals.application.eval_online
 ```
 
 ---
 
 ## 💻 CLI & Execution Reference
 
-The master CLI `main.py` provides an interface for all operations:
+### 1. Hierarchical Module Execution
+```bash
+# ── Component-Level Evals ──
+python -m evals.component.eval_retriever_v1           # Verified V1 (Recall 90%, Precision 87%)
+python -m evals.component.eval_retriever              # Baseline V0
+python -m evals.component.eval_retriever_with_reranker# Cross-Encoder Comparison
+python -m evals.component.eval_generator             # Generator in Isolation
 
+# ── Pipeline-Level Evals ──
+python -m evals.pipeline.eval_rag_pipeline            # Live RAG Triad Suite
+
+# ── Application-Level Evals ──
+python -m evals.application.eval_application          # Correctness, Completeness, Style
+python -m evals.application.eval_safety               # Full Safety Suite
+python -m evals.application.eval_ops                  # Latency, Cost, Reliability Suite
+python -m evals.application.eval_online               # Online Production Monitor
+```
+
+### 2. Master CLI Interface (`main.py`)
 ```bash
 # ── Financial RAG Query ──
 python main.py query "What was JPMorgan's net income in 2023?"
 python main.py query "What was the ROTCE?" --fetch-k 10 --top-k 5
 
 # ── Component & Pipeline Evals ──
-python main.py eval --retriever     # Contextual Recall & Precision
+python main.py eval --retriever-v1  # Verified V1 Retriever evaluation
+python main.py eval --retriever     # Baseline V0 Retriever evaluation
 python main.py eval --reranker      # Cross-Encoder Reranker evaluation
 python main.py eval --generator     # Isolated Generator evaluation
 python main.py eval --triad         # Live Pipeline RAG Triad evaluation

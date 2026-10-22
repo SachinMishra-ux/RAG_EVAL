@@ -1,0 +1,37 @@
+[
+  {
+    "id": "g_synth_001",
+    "query": "How much has EY invested globally in next-generation Assurance platforms, and what tools are mentioned as part of this investment?",
+    "ideal_answer": "EY has invested over DKK 10 billion globally in next-generation Assurance platforms. The tools mentioned include EY Canvas, EY Helix, and Intelligent Checklists, which empower professionals to perform data-driven audits, detect fraud, and streamline risk assessments.",
+    "source": "EY_Financial_report_2025.pdf",
+    "context_sample": ". Globally, EY has invested over DKK 10 billion in next-generation Assurance platforms, integrating AI at scale, advanced analytics and intuitive user experiences. Tools like EY Canvas, EY Helix and I..."
+  },
+  {
+    "id": "g_synth_002",
+    "query": "How many Community Managers does the company have throughout its branch network?",
+    "ideal_answer": "The company has 149 Community Managers throughout its branch network.",
+    "source": "JPM_Annual_2023.pdf",
+    "context_sample": ". These branches have more space to host grassroots community events, small business mentoring sessions and financial health seminars, which have been well-attended — to date, over 400,000 people have..."
+  },
+  {
+    "id": "g_synth_003",
+    "query": "What ranking did EY receive as an employer in Denmark according to Universum in FY25?",
+    "ideal_answer": "EY is ranked Denmark's 10th most attractive employer in Denmark by Universum this year.",
+    "source": "EY_Financial_report_2025.pdf",
+    "context_sample": "Annual report 2024/2025 | 18 Management review EY people and culture in FY25 EY is about people coming together to do great things; people with different backgrounds, experiences and capabilities join..."
+  },
+  {
+    "id": "g_synth_004",
+    "query": "What three intelligent platforms does EY.ai blend with human insight to modernize data and automate processes?",
+    "ideal_answer": "EY.ai blends human insight with three intelligent platforms: the Value Accelerator, the Maturity Model, and the Confidence Index, to modernize data and automate processes.",
+    "source": "EY_Financial_report_2025.pdf",
+    "context_sample": ". Consulting has a full spectrum of transformative services to help clients:  Business Consulting: Delivers transformations to drive growth and create sustainable long-term business value  People Co..."
+  },
+  {
+    "id": "g_synth_005",
+    "query": "What are the four integrated service lines of EY Denmark as described in the 2024/2025 annual report?",
+    "ideal_answer": "EY Denmark's four integrated service lines are Assurance, Consulting, EY-Parthenon, and Tax & Law.",
+    "source": "EY_Financial_report_2025.pdf",
+    "context_sample": "Annual report 2024/2025 | 8 Management review Our business model EY Denmark strives to create long-term value for our stakeholders. Enabled by data and technology, our services and solutions provide t..."
+  }
+]

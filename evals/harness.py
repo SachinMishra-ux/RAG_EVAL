@@ -18,11 +18,25 @@ import json
 
 
 def load_goldens(path: str) -> list[dict]:
-    """Reads a golden dataset JSON file relative to the project root."""
-    if not os.path.isabs(path):
-        root = os.path.dirname(os.path.dirname(__file__))
-        path = os.path.join(root, path)
-    with open(path, "r", encoding="utf-8") as f:
+    """
+    Reads a golden dataset JSON file relative to the project root.
+    Supports both direct paths and subfolder lookups across:
+      - goldens/component/
+      - goldens/pipeline/
+      - goldens/application/
+    """
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    resolved = path if os.path.isabs(path) else os.path.join(root, path)
+
+    if not os.path.exists(resolved):
+        filename = os.path.basename(path)
+        for sub in ["component", "pipeline", "application", ""]:
+            candidate = os.path.join(root, "goldens", sub, filename) if sub else os.path.join(root, "goldens", filename)
+            if os.path.exists(candidate):
+                resolved = candidate
+                break
+
+    with open(resolved, "r", encoding="utf-8") as f:
         return json.load(f)
 
 

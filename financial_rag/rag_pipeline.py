@@ -42,6 +42,16 @@ class RagPipeline:
             "documents": docs,
         }
 
+    def close(self):
+        """Releases vector store client and any open resources cleanly."""
+        try:
+            if hasattr(self, "retriever"):
+                base_retriever = getattr(self.retriever, "base_retriever", None)
+                if base_retriever and hasattr(base_retriever, "qdrant_manager"):
+                    base_retriever.qdrant_manager.close()
+        except Exception:
+            pass
+
 
 if __name__ == "__main__":
     rag = RagPipeline(fetch_k=6, top_k=3)

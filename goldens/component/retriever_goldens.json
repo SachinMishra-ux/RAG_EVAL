@@ -1,0 +1,72 @@
+[
+  {
+    "id": "v1_001",
+    "query": "What record net income and revenue did JPMorgan Chase report for the year 2023?",
+    "ideal_answer": "In 2023, JPMorgan Chase reported record net income of $49.6 billion and managed revenue of $162.4 billion, reflecting strong performance across all lines of business.",
+    "source": "JPMorgan Chase Annual Report 2023 (p. 5)",
+    "pdf_file": "JPM_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_002",
+    "query": "What return on tangible common equity ROTCE did JPMorgan Chase achieve in 2023?",
+    "ideal_answer": "JPMorgan Chase achieved a return on tangible common equity (ROTCE) of 21% in 2023, demonstrating robust profitability and capital efficiency.",
+    "source": "JPMorgan Chase Annual Report 2023 (p. 5, 11)",
+    "pdf_file": "JPM_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_003",
+    "query": "How much liquidity is quantitative tightening draining from the financial system annually according to Jamie Dimon?",
+    "ideal_answer": "According to Jamie Dimon, quantitative tightening is draining more than $900 billion in liquidity from the financial system annually, with unprecedented scale.",
+    "source": "JPMorgan Chase Annual Report 2023 (p. 5)",
+    "pdf_file": "JPM_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_004",
+    "query": "What was the loan loss provisions net release for J.P. Morgan SE in financial year 2023?",
+    "ideal_answer": "In the financial year 2023, J.P. Morgan SE recorded a net release of € 56 million in loan loss provisions (compared to a net charge of € 67 million in 2022), which contributed notably to profit before tax.",
+    "source": "J.P. Morgan SE Annual Report 2023 (p. 24)",
+    "pdf_file": "JPM_SE_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_005",
+    "query": "What ranking did EY achieve as an attractive employer in Denmark in their annual report?",
+    "ideal_answer": "EY was ranked as Denmark's 10th most attractive employer in Denmark, reflecting their workplace culture and commitment to talent development.",
+    "source": "EY Financial Report 2025 (p. 18)",
+    "pdf_file": "EY_Financial_report_2025.pdf"
+  },
+  {
+    "id": "v1_006",
+    "query": "How are Stage 1 and Stage 2 instruments defined for credit risk and expected credit losses in J.P. Morgan SE?",
+    "ideal_answer": "Stage 1 captures instruments for which credit risk has reduced or has not significantly increased since initial recognition, using a 12-month expected credit loss (eCL). Stage 2 captures instruments for which credit risk has increased significantly since initial balance sheet recognition.",
+    "source": "J.P. Morgan SE Annual Report 2023 (p. 55)",
+    "pdf_file": "JPM_SE_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_007",
+    "query": "What were the total assets of J.P. Morgan SE as of December 31 2023 in millions of euros?",
+    "ideal_answer": "As of December 31, 2023, total assets of J.P. Morgan SE stood at € 320,452 million, decreasing by around 12% compared to the prior year.",
+    "source": "J.P. Morgan SE Annual Report 2023 (p. 27, 29)",
+    "pdf_file": "JPM_SE_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_008",
+    "query": "According to Jamie Dimon what risks and challenges exist regarding private credit market players?",
+    "ideal_answer": "Jamie Dimon noted that problems in the private credit market caused by bad players can leak onto good players, and if investors feel mistreated they will cry foul, triggering government response even though money is locked up for years.",
+    "source": "JPMorgan Chase Annual Report 2023 (p. 40)",
+    "pdf_file": "JPM_Annual_2023.pdf"
+  },
+  {
+    "id": "v1_009",
+    "query": "How does EY Denmark define value in use for impairment testing of non-current assets?",
+    "ideal_answer": "Value in use is defined as the present value of the future cash flows expected to be derived from an asset or a cash-generating unit.",
+    "source": "EY Financial Report 2025 (p. 33)",
+    "pdf_file": "EY_Financial_report_2025.pdf"
+  },
+  {
+    "id": "v1_010",
+    "query": "How does the J.P. Morgan SE Management Board structure the Three Lines of Defense for risk management?",
+    "ideal_answer": "The J.P. Morgan SE Management Board sets expectations on the tasks and duties of the Three Lines of Defense, ensuring the board receives independent information about relevant activities and risks.",
+    "source": "J.P. Morgan SE Annual Report 2023 (p. 15)",
+    "pdf_file": "JPM_SE_Annual_2023.pdf"
+  }
+]

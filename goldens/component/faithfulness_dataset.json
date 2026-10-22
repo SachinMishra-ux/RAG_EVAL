@@ -1,0 +1,122 @@
+[
+  {
+    "id": "v1_001",
+    "query": "What record net income and revenue did JPMorgan Chase report for the year 2023?",
+    "ideal_context": [
+      ". This may lead to stickier inflation and higher rates than markets expect. Furthermore, there are downside risks to watch. Quantitative tightening is draining more than $900 billion in liquidity from the system annually — and we have never truly experienced the full effect of quantitative tightening on this scale. Plus the ongoing wars in Ukraine and the Middle East continue to have the potential to disrupt energy and food markets, migration, and military and economic relationships, in addition to their dreadful human cost. These significant and somewhat unprecedented forces cause us to remain cautious. 2023 was another strong year for JPMorgan Chase, with our firm generating record revenue for the sixth consecutive year, as well as setting numerous records in each of our lines of business. We earned revenue in 2023 of $162.4 billion1 and net income of $49.6 billion, with return on tangible common equity (ROTCE) of 21%, reflecting strong underlying performance across our businesses",
+      ". Refer to Business Segment Results on page 67 and Note 34 for additional information. (a) Pre-provision profit, TBVPS and ROTCE are each non-GAAP financial measures. Refer to Explanation and Reconciliation of the Firm’ s Use of Non-GAAP Financial Measures on pages 62–64 for a discussion of these measures. (b) Refer to Liquidity Risk Management on pages 102-109 for additional information on this measure. (c) Refer to Capital Risk Management on pages 91-101 for additional information on these measures. (d) This metric, which was formerly Headc ount, has been renamed Employees but is otherwise unchanged. (e) Included approximately 4,500 individuals associated with Fir st Republic who became employees effective July 2, 2023. JPMorgan Chase & Co. (NYSE: JPM) is a leading financial services firm with assets of $3.9 trillion and operations worldwide"
+    ],
+    "ideal_answer": "In 2023, JPMorgan Chase reported record net income of $49.6 billion and managed revenue of $162.4 billion, reflecting strong performance across all lines of business.",
+    "source_sessions": [
+      "JPM_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_002",
+    "query": "What return on tangible common equity ROTCE did JPMorgan Chase achieve in 2023?",
+    "ideal_context": [
+      ". This may lead to stickier inflation and higher rates than markets expect. Furthermore, there are downside risks to watch. Quantitative tightening is draining more than $900 billion in liquidity from the system annually — and we have never truly experienced the full effect of quantitative tightening on this scale. Plus the ongoing wars in Ukraine and the Middle East continue to have the potential to disrupt energy and food markets, migration, and military and economic relationships, in addition to their dreadful human cost. These significant and somewhat unprecedented forces cause us to remain cautious. 2023 was another strong year for JPMorgan Chase, with our firm generating record revenue for the sixth consecutive year, as well as setting numerous records in each of our lines of business. We earned revenue in 2023 of $162.4 billion1 and net income of $49.6 billion, with return on tangible common equity (ROTCE) of 21%, reflecting strong underlying performance across our businesses",
+      ". In earlier years, banks worried about their survival. While the past two decades have brought some virtually unprecedented challenges, including the great financial crisis and a pandemic followed by a global shutdown, they did not stop us from accomplishing extraordinary things. Our bank has now emerged as the #1 bank by market capitalization. Each of our businesses is among the best in the world, with increased market share, strong financial results and an unwavering focus on serving our clients, communities and shareholders with distinction and dedication. The strengths that are embedded in JPMorgan Chase — the knowledge and cohesiveness of our people, our long-standing client relationships, our technology and product capabilities, our presence in more than 100 countries and our unquestionable fortress balance sheet — would be hard to replicate"
+    ],
+    "ideal_answer": "JPMorgan Chase achieved a return on tangible common equity (ROTCE) of 21% in 2023, demonstrating robust profitability and capital efficiency.",
+    "source_sessions": [
+      "JPM_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_003",
+    "query": "How much liquidity is quantitative tightening draining from the financial system annually according to Jamie Dimon?",
+    "ideal_context": [
+      ". This may lead to stickier inflation and higher rates than markets expect. Furthermore, there are downside risks to watch. Quantitative tightening is draining more than $900 billion in liquidity from the system annually — and we have never truly experienced the full effect of quantitative tightening on this scale. Plus the ongoing wars in Ukraine and the Middle East continue to have the potential to disrupt energy and food markets, migration, and military and economic relationships, in addition to their dreadful human cost. These significant and somewhat unprecedented forces cause us to remain cautious. 2023 was another strong year for JPMorgan Chase, with our firm generating record revenue for the sixth consecutive year, as well as setting numerous records in each of our lines of business. We earned revenue in 2023 of $162.4 billion1 and net income of $49.6 billion, with return on tangible common equity (ROTCE) of 21%, reflecting strong underlying performance across our businesses",
+      ". This ifRs result leads to a Return on Equity of 6 .8% com- pared to 5.2% in the prior year. 4.1.2. Financial Position 4.1.2.1. Principles and Objectives The total balance sheet as of December 31, 2023, decreased by 3% compared to the balance sheet as of December 31, 2022. One of the drivers of the relatively small decline in total balance sheet size was a decrease of the trading assets and trading liabilities while other balance sheet positions were equally contributing, being offset by others without a struc - tural change of the overall balance sheet composition. J.P. Morgan SE was always provided with sufficient liquidity in 2023. The liquidity coverage ratio of 149% as of Decem - ber 31, 2023 is significantly above the mandatory minimum rate of 100%. ² includes recognition of 2023 profit ³ CRR = Capital Requirements Regulation = Regulation (EU) No. 575/2013 of the European Parliament and of the Council of June 26, 2013"
+    ],
+    "ideal_answer": "According to Jamie Dimon, quantitative tightening is draining more than $900 billion in liquidity from the financial system annually, with unprecedented scale.",
+    "source_sessions": [
+      "JPM_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_004",
+    "query": "What was the loan loss provisions net release for J.P. Morgan SE in financial year 2023?",
+    "ideal_context": [
+      ". J.P. Morgan SE’s regulatory capital of € 41,651 ² million was In the financial year 2023, the loan loss provisions with a net release of € 56 million (in 2022 a net charge of € 67 million) contributed notably to the profit before tax performance. This net release was primarily driven by a release of provision on fully repaid facilities, and in line with our expectation that the eCL charged and reserved hereto in 2022 would not lead to economic losses in 2023. The total administrative expenses and depreciations remained stable and have only risen slightly by 3% in 2023. Profit before tax for the year increased significantly from € 1,743 million to € 2,567 million. The planned profit before tax for the financial year 2023 was overachieved by 33%. The annual result in the financial year 2023 amounts to a profit after taxes of € 1,684 million. This ifRs result leads to a Return on Equity of 6 .8% com- pared to 5.2% in the prior year. 4.1.2. Financial Position 4.1.2.1",
+      "Annual Report 2023 of J.P . Morgan SE"
+    ],
+    "ideal_answer": "In the financial year 2023, J.P. Morgan SE recorded a net release of € 56 million in loan loss provisions (compared to a net charge of € 67 million in 2022), which contributed notably to profit before tax.",
+    "source_sessions": [
+      "JPM_SE_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_005",
+    "query": "What ranking did EY achieve as an attractive employer in Denmark in their annual report?",
+    "ideal_context": [
+      ". Having a strong culture for seeking excellence while recognizing and valuing individual differences is what makes our success sustainable. People are our most valuable assets, and our culture is what allows everyone to thrive and develop. EY is ranked Denmark’s 10th most attractive employer in Denmark by Universum this year. We are certainly happy about this recognition from people outside EY. However, we are even happier that 89% of our current employees say they “(..) feel included and supported by the people I interact with every day” as in the EY People Pulse ( April 2025). We want EY to be a great place to work, and seeing external perception and internal recognition converge is an indication that our direction of travel is positive. Our ambition is to continue to be — and to further evolve ourselves to be — an inspiring workplace and thus contribute to EY’s wider purpose of “Building a better working world”",
+      "Annual report 2024/2025 | 6 Management review Highlights in numbers 25% Top 100 Percentage of clients served Audit 10 Universum business ranking 2025 (11 in 2024) 90% of employees say that EY provides an environment where they feel free to be themselves (91% in FY24) 89% of employees agree they feel included and supported by the people they interact with each day (85% in FY24) 3,129 mDKK FY25 revenue (3,003 mDKK in FY24) 1,968 people (+54 since FY24) 51% Top 100 Percentage of clients served Non-audit 36 brand position among Danish companies (Berlingske Image Analysis 2024) +10 bDKK technology investments FY25 (EY Global)"
+    ],
+    "ideal_answer": "EY was ranked as Denmark's 10th most attractive employer in Denmark, reflecting their workplace culture and commitment to talent development.",
+    "source_sessions": [
+      "EY_Financial_report_2025.pdf"
+    ]
+  },
+  {
+    "id": "v1_006",
+    "query": "How are Stage 1 and Stage 2 instruments defined for credit risk and expected credit losses in J.P. Morgan SE?",
+    "ideal_context": [
+      ". Stage 1 captures the instruments for which credit risk has reduced or has not significantly increased since initial balance sheet recognition. The eCL for Stage 1 assets is the expected credit losses over the next year (12-month eCL). Stage 2 captures the instruments for which credit risk has increased significantly since initial balance sheet recogni- tion. The eCL for Stage 2 assets considers the expected credit losses over the entire residual term of the instrument (Lifetime eCL). Stage 3 assets are those which are classified as impaired as of the reporting date. The eCL is determined for Stage 1 and Stage 2 customers as well as 90dpd only defaults in Stage 3 on a collective basis using statistical risk parameters and forecasts of the economic environment. The underlying modelling framework is regularly reviewed, and updated if necessary. For impaired instruments other than technical 90dpd, the eCL is determined individually on counterparty level. For Stage 3 exposures, J.P",
+      "52 ManageMent RepoRt Risk ratings are reviewed regularly by Credit Risk Manage - ment and revised as needed to reflect the borrower’s current financial position, risk profile and related collateral. The cal - culations and assumptions are based on both internal and external historical experience and management judgment are reviewed regularly. For portfolios that fluctuate in value based upon an under - lying reference asset or index, potential future exposure is measured using probable and unexpected loss calculations based upon estimates of probability of default and loss sever- ity given a default. Expected credit losses J.P. Morgan SE uses an expected credit loss model (eCL ) in accordance with ifRs 9 to determine the credit risk provi - sioning on financial assets and credit-related obligations. The eCL is calculated for financial instruments valued at amortized cost or fvoCi"
+    ],
+    "ideal_answer": "Stage 1 captures instruments for which credit risk has reduced or has not significantly increased since initial recognition, using a 12-month expected credit loss (eCL). Stage 2 captures instruments for which credit risk has increased significantly since initial balance sheet recognition.",
+    "source_sessions": [
+      "JPM_SE_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_007",
+    "query": "What were the total assets of J.P. Morgan SE as of December 31 2023 in millions of euros?",
+    "ideal_context": [
+      ". Total assets of J.P. Morgan SE has decreased by around 12% compared to the prior year and stood at € 320,452 million as of December 31, 2023. 4.2.3.1. Overall Statement on Earnings, Financial and Assets Position In summary, the earnings, financial and asset position can be assessed as positive and strong. The expectations from the beginning of 2023 for the development of the profit of the year have been clearly overachieved thanks to the strong perfor - mance across most segments with the exception of Investment Banking due to continued market uncertainty in light of grow- ing geopolitical tension. The capital measures taken in 2023 and in 2022 had the expected effect on the capital ratios over the course of the year. As predicted, the requirements for the liquidity coverage ratio remained clearly over the threshold during the financial year. Profit before tax for the year increased significantly from € 1,466 million to € 2,398 million",
+      "Annual Report 2023 of J.P . Morgan SE"
+    ],
+    "ideal_answer": "As of December 31, 2023, total assets of J.P. Morgan SE stood at € 320,452 million, decreasing by around 12% compared to the prior year.",
+    "source_sessions": [
+      "JPM_SE_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_008",
+    "query": "According to Jamie Dimon what risks and challenges exist regarding private credit market players?",
+    "ideal_context": [
+      ". On the other hand, not all players are that good. And problems in the private credit market caused by the bad players can leak onto the good ones, even though private credit money is locked up for years. If investors feel mistreated, they will cry foul, and the government will respond by putting a laser focus on the business. It’s a reasonable assumption that at some point regulations will focus on the private markets as they do on the public markets. This scrutiny will include a look at how private credit values its assets, which isn’t as transparent as public market valuations. In addition, private market loans commonly lack liquidity in the sec- ondary market and are not generally supported by in-depth market research. New financial products that grow extremely rap - idly often become an area of unexpected risk in the markets",
+      ". Taken together, these steps are designed to respond to a growing perception (and, I believe, reality) that the asset management industry gen - erally places undue reliance on proxy advisors in how proxies are voted. We believe these actions will strengthen our relationships with our clients and with companies while helping to build trust among shareholders, investors and companies. THE BENEFITS AND RISKS OF PRIVATE CREDIT I have already mentioned some of the benefits of private credit, and I’ll now mention some more. Many people in the private credit arena are very smart and creative and want to help the compa - nies they invest in navigate through market shoals. They can move quickly, discreetly and flexibly. Most generally understand that bad accounting drives bad decisions, and their goal is to make the right decisions for the future of the company. On the other hand, not all players are that good"
+    ],
+    "ideal_answer": "Jamie Dimon noted that problems in the private credit market caused by bad players can leak onto good players, and if investors feel mistreated they will cry foul, triggering government response even though money is locked up for years.",
+    "source_sessions": [
+      "JPM_Annual_2023.pdf"
+    ]
+  },
+  {
+    "id": "v1_009",
+    "query": "How does EY Denmark define value in use for impairment testing of non-current assets?",
+    "ideal_context": [
+      ". Equity investments in subsidiaries Equity investments in subsidiaries are measured at cost. In case of evidence of impairment, an impairment test is conducted. In connection with the impairment test, the subsidiary’s recoverable amount is calculated. Equity investments are written down to the lower of the carrying amount and the recoverable amount. Impairment losses are recognised in the statement of comprehensive income as financial expenses. Impairment losses are reversed in so far as the assumptions and estimates underlying the impairment losses have changed Impairment testing of non-current assets Other non-current assets and right of use assets The carrying amount of other non-current assets and right og use assets is tested annually for indications of impairment. When there is an indication that assets may be impaired, the recoverable amount of the asset is determined. The recoverable amount is the higher of an asset’s fair value less expected costs to sell and its value in use",
+      ". The recoverable amount is the higher of an asset’s fair value less expected costs to sell and its value in use. Value in use is the present value of the future cash flows expected to be derived from an asset or the cash-generating unit to which the asset belongs. Recognition of impairment losses in the income statement Any write-down is recognised in the income statement as depreciation, amortization and impairment losses on non- current assets and right of use assets. However, impairment losses on goodwill are recognised in a separate line item in the income statement. Impairment losses on goodwill are not reversed. Impairment losses recognised in respect of other assets are reversed if the assumptions and estimates underlying the impairment losses have changed"
+    ],
+    "ideal_answer": "Value in use is defined as the present value of the future cash flows expected to be derived from an asset or a cash-generating unit.",
+    "source_sessions": [
+      "EY_Financial_report_2025.pdf"
+    ]
+  },
+  {
+    "id": "v1_010",
+    "query": "How does the J.P. Morgan SE Management Board structure the Three Lines of Defense for risk management?",
+    "ideal_context": [
+      "42 ManageMent RepoRt 6.2.2. J.P. Morgan SE Risk Governance and Oversight Structure J.P. Morgan SE has an Independent Risk Management (iRM) func- tion, which consists of the Risk Management and Compliance organizations. The Chief Risk Officer (“CRo”) leads the iRM func- tion and maintains the risk governance framework of the entity. Each area of J.P. Morgan SE giving rise to risk is expected to operate within the parameters identified by the iRM function, and within its own management-identified risk and control standards. J.P. Morgan SE’s first line of defense consists of each – There is a clear segregation of duties between first and second line of defense to avoid potential conflicts of interest. – J.P. Morgan SE defines and implements suitable procedures for risk identification, measurement, aggregation, manage- ment, monitoring, and communication of the risk categories",
+      "7 ManageMent RepoRt The overall objective of our Supervisory Board and our Man- agement Board is to take reasonable care to ensure an effec- tive governance structure to manage and oversee the develop- ment of the Bank’s business activities in line with our Business Strategy and to maintain risk systems and controls across all three lines of defense that are appropriate to the business of J.P. Morgan SE and its branches. Our model of three lines of defense intends the early identifi- cation of emerging new risks and their effective management thanks to comprehensive controls and strong governance and on-going management of the major and emerging risks in our business activities. These structures are set out in detailed policies and frameworks, in particular the J.P. Morgan SE Risk Strategy, also promoting a strong business conduct and risk culture"
+    ],
+    "ideal_answer": "The J.P. Morgan SE Management Board sets expectations on the tasks and duties of the Three Lines of Defense, ensuring the board receives independent information about relevant activities and risks.",
+    "source_sessions": [
+      "JPM_SE_Annual_2023.pdf"
+    ]
+  }
+]

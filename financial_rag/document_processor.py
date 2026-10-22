@@ -12,8 +12,15 @@ Supports:
 import os
 import gc
 import base64
+import warnings
+import logging
 from io import BytesIO
 from PIL import Image
+
+# Suppress pypdf fontTools CFF parsing warnings
+warnings.filterwarnings("ignore", message=".*fontTools.*")
+logging.getLogger("pypdf").setLevel(logging.ERROR)
+
 from pypdf import PdfReader
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter

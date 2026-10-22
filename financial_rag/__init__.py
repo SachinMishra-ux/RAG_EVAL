@@ -3,6 +3,14 @@ financial_rag package initialization.
 Exposes core components for the Financial RAG system.
 """
 
+import warnings
+warnings.filterwarnings("ignore", message=".*Addressing runs with.*")
+try:
+    from langsmith._internal._beta_decorator import LangSmithBetaWarning
+    warnings.filterwarnings("ignore", category=LangSmithBetaWarning)
+except Exception:
+    pass
+
 from financial_rag.rag_pipeline import RagPipeline
 from financial_rag.generator import generate, generate_stream
 from financial_rag.retriever import FinancialRetriever, build_retriever

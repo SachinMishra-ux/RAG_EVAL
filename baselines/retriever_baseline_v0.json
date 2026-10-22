@@ -1,0 +1,26 @@
+{
+  "version": "v0",
+  "dataset": "goldens/retriever_goldens.json",
+  "eval_timestamp": "2026-10-21T18:32:51Z",
+  "judge_model": "gemini-3.1-flash-lite",
+  "k": 5,
+  "metrics": {
+    "contextual_recall": {
+      "pass_rate": 0.30,
+      "avg_score": 0.30,
+      "passed": 3,
+      "failed": 7,
+      "total": 10
+    },
+    "contextual_precision": {
+      "pass_rate": 0.60,
+      "avg_score": 0.58,
+      "passed": 6,
+      "failed": 4,
+      "total": 10
+    }
+  },
+  "overall_pass_rate": 0.30,
+  "execution_time_seconds": 3.92,
+  "notes": "Baseline evaluation where 7 queries asked for unindexed figures or generic parent entity metrics not found in European subsidiary or regional report chunks."
+}
