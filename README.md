@@ -303,15 +303,9 @@ Measures retrieval performance on `goldens/component/retriever_goldens_v1.json`:
 - **Contextual Recall**: Did the retriever fetch all relevant information needed to answer the question?
 - **Contextual Precision**: Are the most relevant chunks ranked at the top of the context window?
 
-> [!TIP]
-> **Command Compatibility**: You can invoke evaluations either via the organized module paths (e.g. `python -m evals.component.eval_retriever_v1`), the legacy flat paths (e.g. `python -m evals.eval_retriever`), or via the master CLI (`python main.py eval`). Both forms are fully supported.
-
 ```bash
 # Run Verified V1 Retriever Eval (Recall: 90%+, Precision: 80%+)
 python -m evals.component.eval_retriever_v1
-
-# Or using the backward-compatible shortcut:
-python -m evals.eval_retriever_v1
 
 # Or via Master CLI
 python main.py eval --retriever-v1
