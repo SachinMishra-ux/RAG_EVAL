@@ -39,12 +39,30 @@ def get_groq_fallback():
     return None
 
 
+def get_gemini_chat_model():
+    """Initializes high-speed Gemini ChatModel for fast evaluations."""
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if api_key:
+        try:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+            model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+            return ChatGoogleGenerativeAI(
+                model=model,
+                google_api_key=api_key,
+                temperature=0.0,
+                timeout=30.0,
+            )
+        except Exception as e:
+            print(f"[Generator] Gemini init error: {e}")
+    return None
+
+
 def get_chat_model():
     """
     Initializes primary ChatModel:
-    1. Primary: SenseNova ChatModel (via OpenAI-compatible endpoint)
+    1. Primary: SenseNova ChatModel (via OpenAI-compatible endpoint with strict timeout)
     2. Fallback: Groq ChatModel
-    Gemini is not used.
+    3. Fallback: Gemini ChatModel
     """
     sensenova_api_key = os.getenv("SENSENOVA_API_KEY")
     if sensenova_api_key:
@@ -56,6 +74,8 @@ def get_chat_model():
                 api_key=sensenova_api_key,
                 model=model,
                 temperature=0.0,
+                timeout=25.0,
+                max_retries=2,
             )
         except Exception as e:
             print(f"[Generator] SenseNova init error: {e}. Falling back to Groq...")
@@ -64,11 +84,15 @@ def get_chat_model():
     if groq_llm:
         return groq_llm
 
+    gemini_llm = get_gemini_chat_model()
+    if gemini_llm:
+        return gemini_llm
+
     if os.getenv("OPENAI_API_KEY"):
         from langchain_openai import ChatOpenAI
         return ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
 
-    raise ValueError("No valid LLM API key detected. Please configure SENSENOVA_API_KEY or GROQ_API_KEY in .env")
+    raise ValueError("No valid LLM API key detected. Please configure SENSENOVA_API_KEY, GROQ_API_KEY, or GEMINI_API_KEY in .env")
 
 
 llm = get_chat_model()
@@ -109,28 +133,39 @@ chain = prompt | llm | StrOutputParser()
 measured_chain = prompt | llm  # preserves AIMessage usage_metadata for token/cost evals
 
 
-def generate(query: str, context: list[str], max_retries: int = 4, backoff: float = 3.0) -> str:
+def generate(query: str, context: list[str], max_retries: int = 4, backoff: float = 3.0, llm_override=None) -> str:
     """Generate a grounded financial answer from the query and context chunks."""
     context_text = "\n\n".join(context)
+    active_chain = (prompt | llm_override | StrOutputParser()) if llm_override else chain
     import time
     for attempt in range(max_retries):
         try:
-            return chain.invoke({"question": query, "context": context_text})
+            return active_chain.invoke({"question": query, "context": context_text})
         except Exception as e:
             if "429" in str(e) or "rate_limit" in str(e).lower():
                 sleep_s = backoff * (attempt + 1) + 2.0
                 print(f"[Generator] Rate limit (429) hit. Backing off {sleep_s:.1f}s (Attempt {attempt+1}/{max_retries})...")
                 time.sleep(sleep_s)
             else:
+                gemini_fallback = get_gemini_chat_model()
+                if gemini_fallback and llm_override != gemini_fallback:
+                    print(f"[Generator] Provider error ({e}). Fast fallback to Gemini...")
+                    fallback_chain = prompt | gemini_fallback | StrOutputParser()
+                    return fallback_chain.invoke({"question": query, "context": context_text})
                 fallback_llm = get_groq_fallback()
                 if fallback_llm:
-                    print(f"[Generator] SenseNova error ({e}). Falling back to Groq...")
+                    print(f"[Generator] Provider error ({e}). Falling back to Groq...")
                     fallback_chain = prompt | fallback_llm | StrOutputParser()
                     return fallback_chain.invoke({"question": query, "context": context_text})
                 raise e
     try:
-        return chain.invoke({"question": query, "context": context_text})
+        return active_chain.invoke({"question": query, "context": context_text})
     except Exception as e:
+        gemini_fallback = get_gemini_chat_model()
+        if gemini_fallback and llm_override != gemini_fallback:
+            print(f"[Generator] Fast fallback to Gemini...")
+            fallback_chain = prompt | gemini_fallback | StrOutputParser()
+            return fallback_chain.invoke({"question": query, "context": context_text})
         fallback_llm = get_groq_fallback()
         if fallback_llm:
             print(f"[Generator] Falling back to Groq...")

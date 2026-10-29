@@ -24,7 +24,7 @@ class RagPipeline:
         self.retriever = RerankingRetriever(fetch_k=fetch_k, top_k=top_k)
 
     @traceable(run_type="chain", name="FinancialRagPipeline")
-    def invoke(self, query: str) -> dict:
+    def invoke(self, query: str, llm_override=None) -> dict:
         # 1. RETRIEVE: over-fetch then rerank down to top_k documents
         docs = self.retriever.invoke(query)
 
@@ -32,7 +32,7 @@ class RagPipeline:
         context = [doc.page_content for doc in docs]
 
         # 3. GENERATE: produce grounded answer from the retrieved context
-        answer = generate(query, context)
+        answer = generate(query, context, llm_override=llm_override)
 
         # Return all legs of the RAG triad
         return {

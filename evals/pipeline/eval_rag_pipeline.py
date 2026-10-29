@@ -1,6 +1,6 @@
 """
-evals/eval_rag_pipeline.py
-==========================
+evals/pipeline/eval_rag_pipeline.py
+===================================
 Pipeline-level evaluation of the complete Financial RAG pipeline.
 
 Evaluates the classical RAG Triad on live system executions:
@@ -9,9 +9,10 @@ Evaluates the classical RAG Triad on live system executions:
   3. Answer Relevancy     : Does the answer address the question asked?
 
 Usage:
-    python -m evals.eval_rag_pipeline
+    python -m evals.pipeline.eval_rag_pipeline
 """
 
+import time
 from dotenv import load_dotenv
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
@@ -22,6 +23,7 @@ from deepeval.metrics import (
 )
 
 from financial_rag.rag_pipeline import RagPipeline
+from financial_rag.generator import get_gemini_chat_model
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 from evals.llm_judge import get_judge_model
 
@@ -37,11 +39,16 @@ def run(rag=None):
 
     goldens = load_goldens(GOLDEN_PATH)
     judge = get_judge_model()
+    eval_llm = get_gemini_chat_model()
 
     test_cases = []
     print(f"[RAG Triad Eval] Executing live pipeline for {len(goldens)} queries...")
-    for g in goldens:
-        res = rag.invoke(g["query"])
+    t_start = time.time()
+    for i, g in enumerate(goldens):
+        t0 = time.time()
+        res = rag.invoke(g["query"], llm_override=eval_llm)
+        elapsed = time.time() - t0
+        print(f"  [{i+1:02d}/{len(goldens):02d}] Pipeline processed in {elapsed:.2f}s: '{g['query'][:50]}...'")
 
         test_cases.append(
             LLMTestCase(
@@ -50,6 +57,8 @@ def run(rag=None):
                 retrieval_context=res["context"],
             )
         )
+
+    print(f"[RAG Triad Eval] All {len(goldens)} queries processed in {time.time() - t_start:.2f}s.")
 
     metrics = [
         ContextualRelevancyMetric(threshold=THRESHOLD, model=judge, include_reason=True),

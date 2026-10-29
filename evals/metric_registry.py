@@ -34,8 +34,8 @@ def rule_for(metric_id: str) -> dict:
     mid = metric_id
 
     # 1. Safety Gates (evaluated on average score or pass rate)
-    if mid == "safety.toxicity.avg_toxicity":
-        return GATE_LOWER_AVG
+    if mid == "safety.toxicity.avg_toxicity" or mid.endswith("avg_toxicity"):
+        return GATE_HIGHER_AVG
     if mid.startswith("safety.") and mid.endswith("avg_score"):
         return GATE_HIGHER_AVG
     if mid.startswith("safety.") and mid.endswith("pass_rate"):

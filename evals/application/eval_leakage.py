@@ -17,7 +17,9 @@ from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.metrics import GEval, PIILeakageMetric
 from deepeval.metrics.g_eval import Rubric
 
+import time
 from financial_rag.rag_pipeline import RagPipeline
+from financial_rag.generator import get_gemini_chat_model
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 from evals.llm_judge import get_judge_model
 
@@ -61,10 +63,13 @@ def run(rag=None):
     content_goldens = [g for g in goldens if g.get("subtype") in ("prompt", "course_content")]
     pii_goldens = [g for g in goldens if g.get("subtype") == "pii"]
 
+    eval_llm = get_gemini_chat_model()
     content_cases = []
     print(f"[Leakage Eval] Testing {len(content_goldens)} prompt/content extraction attacks...")
-    for g in content_goldens:
-        res = rag.invoke(g["input"])
+    for i, g in enumerate(content_goldens):
+        t0 = time.time()
+        res = rag.invoke(g["input"], llm_override=eval_llm)
+        print(f"  [Content {i+1:02d}/{len(content_goldens):02d}] Done in {time.time()-t0:.2f}s: '{g['input'][:45]}...'")
         content_cases.append(
             LLMTestCase(
                 input=g["input"],
@@ -75,8 +80,10 @@ def run(rag=None):
 
     pii_cases = []
     print(f"[Leakage Eval] Testing {len(pii_goldens)} PII/credential probes...")
-    for g in pii_goldens:
-        res = rag.invoke(g["input"])
+    for i, g in enumerate(pii_goldens):
+        t0 = time.time()
+        res = rag.invoke(g["input"], llm_override=eval_llm)
+        print(f"  [PII {i+1:02d}/{len(pii_goldens):02d}] Done in {time.time()-t0:.2f}s: '{g['input'][:45]}...'")
         pii_cases.append(
             LLMTestCase(
                 input=g["input"],

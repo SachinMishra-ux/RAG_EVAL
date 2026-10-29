@@ -1,37 +1,37 @@
 [
   {
     "id": "g_synth_001",
-    "query": "How much has EY invested globally in next-generation Assurance platforms, and what tools are mentioned as part of this investment?",
-    "ideal_answer": "EY has invested over DKK 10 billion globally in next-generation Assurance platforms. The tools mentioned include EY Canvas, EY Helix, and Intelligent Checklists, which empower professionals to perform data-driven audits, detect fraud, and streamline risk assessments.",
-    "source": "EY_Financial_report_2025.pdf",
-    "context_sample": ". Globally, EY has invested over DKK 10 billion in next-generation Assurance platforms, integrating AI at scale, advanced analytics and intuitive user experiences. Tools like EY Canvas, EY Helix and I..."
+    "query": "What was the Corporate & Investment Bank's net income and revenue in 2023?",
+    "ideal_answer": "$14 billion of net income on revenue of $49 billion",
+    "source": "JPM_Annual_2023.pdf",
+    "context_sample": "2023 Highlights CORPORATE & INVESTMENT BANK Generated $14 billion of net income on revenue of $49 billion IN DEPOSITS AND FOR SMALL BUSINESSES Named #1 in retail deposit market share and #1 primary ba..."
   },
   {
     "id": "g_synth_002",
-    "query": "How many Community Managers does the company have throughout its branch network?",
-    "ideal_answer": "The company has 149 Community Managers throughout its branch network.",
+    "query": "What percentage of Asset Management AUM was managed by female and/or diverse portfolio managers?",
+    "ideal_answer": "54% of Asset Management AUM was managed by female and/or diverse portfolio managers.",
     "source": "JPM_Annual_2023.pdf",
-    "context_sample": ". These branches have more space to host grassroots community events, small business mentoring sessions and financial health seminars, which have been well-attended — to date, over 400,000 people have..."
+    "context_sample": "client asset flows in 2023 across all regions and channels, with strength in liquidity, fixed income, equity, custody and brokerage  #2 in Active ETF AUM and flows  #1 in Institutional Money Market ..."
   },
   {
     "id": "g_synth_003",
-    "query": "What ranking did EY receive as an employer in Denmark according to Universum in FY25?",
-    "ideal_answer": "EY is ranked Denmark's 10th most attractive employer in Denmark by Universum this year.",
-    "source": "EY_Financial_report_2025.pdf",
-    "context_sample": "Annual report 2024/2025 | 18 Management review EY people and culture in FY25 EY is about people coming together to do great things; people with different backgrounds, experiences and capabilities join..."
+    "query": "What position has JPMorgan Chase achieved by market capitalization?",
+    "ideal_answer": "#1 bank by market capitalization.",
+    "source": "JPM_Annual_2023.pdf",
+    "context_sample": ". Our bank has now emerged as the #1 bank by market capitalization. Each of our businesses is among the best in the world, with increased market share, strong financial results and an unwavering focus..."
   },
   {
     "id": "g_synth_004",
-    "query": "What three intelligent platforms does EY.ai blend with human insight to modernize data and automate processes?",
-    "ideal_answer": "EY.ai blends human insight with three intelligent platforms: the Value Accelerator, the Maturity Model, and the Confidence Index, to modernize data and automate processes.",
-    "source": "EY_Financial_report_2025.pdf",
-    "context_sample": ". Consulting has a full spectrum of transformative services to help clients:  Business Consulting: Delivers transformations to drive growth and create sustainable long-term business value  People Co..."
+    "query": "How many of the 100 sub-custodian locations are managed directly by JPMorgan Chase?",
+    "ideal_answer": "13 of these sub-custodians are managed directly by JPMorgan Chase.",
+    "source": "JPM_SE_Annual_2023.pdf",
+    "context_sample": "19 ManageMent RepoRt sinki, Luxembourg, Oslo, Stockholm and the Headquarters in Frankfurt. Our range of products covers custody and depositary services, fund services consisting of fund accounting, tr..."
   },
   {
     "id": "g_synth_005",
-    "query": "What are the four integrated service lines of EY Denmark as described in the 2024/2025 annual report?",
-    "ideal_answer": "EY Denmark's four integrated service lines are Assurance, Consulting, EY-Parthenon, and Tax & Law.",
+    "query": "Who is the Vice Chair and has been a member of the board since 2019?",
+    "ideal_answer": "Mona Blønd Mona (born 1963) is Vice Chair and has been a member of the board since 2019.",
     "source": "EY_Financial_report_2025.pdf",
-    "context_sample": "Annual report 2024/2025 | 8 Management review Our business model EY Denmark strives to create long-term value for our stakeholders. Enabled by data and technology, our services and solutions provide t..."
+    "context_sample": ". Carina is also Head of Tax & Law at Nordic level. Mona Blønd Mona (born 1963) is Vice Chair and has been a member of the board since 2019. Mona is a state authorized public accountant. Mona has more..."
   }
 ]

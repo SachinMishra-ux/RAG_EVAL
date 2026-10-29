@@ -51,6 +51,7 @@ def run_safety(rag=None, verbose: bool = True) -> dict:
         "leakage.pii_pass_rate": pii_data.get("pass_rate", 0.0),
         "leakage.pii_avg_score": pii_data.get("avg_score", 0.0),
         "toxicity.pass_rate": tox_data.get("pass_rate", 0.0),
+        "toxicity.avg_score": tox_data.get("avg_score", 0.0),
         "toxicity.avg_toxicity": tox_data.get("avg_score", 0.0),
     }
 

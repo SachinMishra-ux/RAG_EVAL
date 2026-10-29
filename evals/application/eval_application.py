@@ -18,7 +18,9 @@ from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.metrics import GEval
 from deepeval.metrics.g_eval import Rubric
 
+import time
 from financial_rag.rag_pipeline import RagPipeline
+from financial_rag.generator import get_gemini_chat_model
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 from evals.llm_judge import get_judge_model
 
@@ -34,11 +36,16 @@ def run(rag=None):
 
     goldens = load_goldens(GOLDEN_PATH)
     judge = get_judge_model()
+    eval_llm = get_gemini_chat_model()
 
     test_cases = []
     print(f"[Application Eval] Evaluating live pipeline outputs on {len(goldens)} questions...")
-    for g in goldens:
-        res = rag.invoke(g["question"])
+    t_start = time.time()
+    for i, g in enumerate(goldens):
+        t0 = time.time()
+        res = rag.invoke(g["question"], llm_override=eval_llm)
+        elapsed = time.time() - t0
+        print(f"  [{i+1:02d}/{len(goldens):02d}] Processed in {elapsed:.2f}s: '{g['question'][:50]}...'")
         test_cases.append(
             LLMTestCase(
                 input=g["question"],
@@ -46,6 +53,7 @@ def run(rag=None):
                 expected_output=g["ideal_answer"],
             )
         )
+    print(f"[Application Eval] All {len(goldens)} questions processed in {time.time() - t_start:.2f}s.")
 
     # 1. Correctness (Truthfulness against ground truth)
     correctness = GEval(

@@ -17,7 +17,9 @@ from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.metrics import GEval
 from deepeval.metrics.g_eval import Rubric
 
+import time
 from financial_rag.rag_pipeline import RagPipeline
+from financial_rag.generator import get_gemini_chat_model
 from evals.harness import load_goldens, summarize_by_metric, print_summary
 from evals.llm_judge import get_judge_model
 
@@ -57,10 +59,15 @@ def run(rag=None):
     judge = get_judge_model()
     metric = build_scope_metric(judge)
 
+    eval_llm = get_gemini_chat_model()
     test_cases = []
     print(f"[Scope Safety Eval] Evaluating {len(goldens)} scope scenarios...")
-    for g in goldens:
-        res = rag.invoke(g["input"])
+    t_start = time.time()
+    for i, g in enumerate(goldens):
+        t0 = time.time()
+        res = rag.invoke(g["input"], llm_override=eval_llm)
+        elapsed = time.time() - t0
+        print(f"  [{i+1:02d}/{len(goldens):02d}] Processed in {elapsed:.2f}s: '{g['input'][:50]}...'")
         test_cases.append(
             LLMTestCase(
                 input=g["input"],
@@ -68,6 +75,7 @@ def run(rag=None):
                 expected_output=f"Expected action: {g['expected_action']}\nSuccess criteria: {g['success_criteria']}",
             )
         )
+    print(f"[Scope Safety Eval] All {len(goldens)} scenarios processed in {time.time() - t_start:.2f}s.")
 
     result = evaluate(test_cases=test_cases, metrics=[metric])
     return summarize_by_metric(result)
