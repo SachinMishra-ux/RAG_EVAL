@@ -20,43 +20,123 @@ load_dotenv(override=True)
 
 
 class GeminiJudge(DeepEvalBaseLLM):
-    """DeepEval judge adapter wrapping Google Gemini with native async support."""
+    """DeepEval judge adapter wrapping Google Gemini with native async support, concurrency limits, and retry backoff."""
     def __init__(self, model_name: str = "gemini-3.1-flash-lite"):
         self.model_name = os.environ.get("GEMINI_MODEL", model_name)
-        api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        api_key = (
+            os.environ.get("GEMINI_API_KEY", "").strip()
+            or os.environ.get("GOOGLE_API_KEY", "").strip()
+        )
         if not api_key:
-            raise ValueError("GEMINI_API_KEY is not set in environment.")
+            raise ValueError("GEMINI_API_KEY or GOOGLE_API_KEY is not set in environment.")
         from google import genai
         self.client = genai.Client(api_key=api_key)
+        self._semaphore = None
+        self.fallback_models = ["gemini-flash-lite-latest", "gemini-2.5-flash"]
+
+    def _get_semaphore(self):
+        if self._semaphore is None:
+            # Throttle concurrency to max 3 concurrent requests to Google GenAI to avoid 503 high demand spikes
+            self._semaphore = asyncio.Semaphore(3)
+        return self._semaphore
 
     def load_model(self):
         return self.client
 
+    def _is_transient_error(self, e: Exception) -> bool:
+        err_msg = str(e).lower()
+        status_code = getattr(e, "code", getattr(e, "status_code", None))
+        if status_code in (503, 429, 500, 502, 504):
+            return True
+        transient_phrases = [
+            "503", "unavailable", "high demand", "spikes in demand",
+            "429", "resource_exhausted", "quota", "rate limit",
+            "500", "internal", "502", "504", "timeout"
+        ]
+        return any(phrase in err_msg for phrase in transient_phrases)
+
     def generate(self, prompt: str, *args, schema=None, **kwargs) -> str:
+        import time
         from google.genai import types
+
         config = None
         if schema:
             prompt = f"{prompt}\n\nPlease respond strictly in valid JSON format matching schema:\n{schema}"
             config = types.GenerateContentConfig(response_mime_type="application/json")
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=config,
-        )
-        return response.text
+
+        candidate_models = [self.model_name] + [m for m in self.fallback_models if m != self.model_name]
+        last_err = None
+
+        for model in candidate_models:
+            for attempt in range(3):
+                try:
+                    response = self.client.models.generate_content(
+                        model=model,
+                        contents=prompt,
+                        config=config,
+                    )
+                    return response.text
+                except Exception as e:
+                    last_err = e
+                    if self._is_transient_error(e) and attempt < 2:
+                        delay = (attempt + 1) * 2.5
+                        print(f"[GeminiJudge] {model} transient notice ({e}). Retrying in {delay}s...")
+                        time.sleep(delay)
+                    else:
+                        break
+
+        # If all Gemini models encountered errors, try SenseNova fallback if available
+        if os.environ.get("SENSENOVA_API_KEY"):
+            try:
+                print(f"[GeminiJudge] Gemini models unavailable ({last_err}). Falling back to SenseNova...")
+                fallback_judge = SenseNovaJudge()
+                return fallback_judge.generate(prompt, *args, schema=schema, **kwargs)
+            except Exception as fb_err:
+                print(f"[GeminiJudge] SenseNova fallback also failed: {fb_err}")
+
+        raise last_err
 
     async def a_generate(self, prompt: str, *args, schema=None, **kwargs) -> str:
         from google.genai import types
+
         config = None
         if schema:
             prompt = f"{prompt}\n\nPlease respond strictly in valid JSON format matching schema:\n{schema}"
             config = types.GenerateContentConfig(response_mime_type="application/json")
-        response = await self.client.aio.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=config,
-        )
-        return response.text
+
+        candidate_models = [self.model_name] + [m for m in self.fallback_models if m != self.model_name]
+        sem = self._get_semaphore()
+        last_err = None
+
+        async with sem:
+            for model in candidate_models:
+                for attempt in range(3):
+                    try:
+                        response = await self.client.aio.models.generate_content(
+                            model=model,
+                            contents=prompt,
+                            config=config,
+                        )
+                        return response.text
+                    except Exception as e:
+                        last_err = e
+                        if self._is_transient_error(e) and attempt < 2:
+                            delay = (attempt + 1) * 2.5
+                            print(f"[GeminiJudge] {model} transient notice ({e}). Retrying in {delay}s...")
+                            await asyncio.sleep(delay)
+                        else:
+                            break
+
+            # If all Gemini models encountered errors, try SenseNova fallback if available
+            if os.environ.get("SENSENOVA_API_KEY"):
+                try:
+                    print(f"[GeminiJudge] Gemini models unavailable ({last_err}). Falling back to SenseNova...")
+                    fallback_judge = SenseNovaJudge()
+                    return await fallback_judge.a_generate(prompt, *args, schema=schema, **kwargs)
+                except Exception as fb_err:
+                    print(f"[GeminiJudge] SenseNova fallback also failed: {fb_err}")
+
+            raise last_err
 
     def get_model_name(self) -> str:
         return f"Gemini/{self.model_name}"

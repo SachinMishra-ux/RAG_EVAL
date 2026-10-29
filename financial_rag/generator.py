@@ -45,7 +45,7 @@ def get_gemini_chat_model():
     if api_key:
         try:
             from langchain_google_genai import ChatGoogleGenerativeAI
-            model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+            model = os.getenv("GEMINI_MODEL", "gemini-flash-lite-latest")
             return ChatGoogleGenerativeAI(
                 model=model,
                 google_api_key=api_key,
@@ -133,6 +133,24 @@ chain = prompt | llm | StrOutputParser()
 measured_chain = prompt | llm  # preserves AIMessage usage_metadata for token/cost evals
 
 
+def measure_query(question: str, context_text: str, llm_override=None):
+    """Executes prompt against LLM and returns the AIMessage with usage_metadata, with automatic fallback."""
+    active_llm = llm_override or llm
+    target_chain = prompt | active_llm
+    try:
+        return target_chain.invoke({"question": question, "context": context_text})
+    except Exception as e:
+        gemini_fallback = get_gemini_chat_model()
+        if gemini_fallback and active_llm != gemini_fallback:
+            print(f"[Generator] Token measurement fallback to Gemini due to: {e}...")
+            return (prompt | gemini_fallback).invoke({"question": question, "context": context_text})
+        fallback_llm = get_groq_fallback()
+        if fallback_llm:
+            print(f"[Generator] Token measurement fallback to Groq due to: {e}...")
+            return (prompt | fallback_llm).invoke({"question": question, "context": context_text})
+        raise e
+
+
 def generate(query: str, context: list[str], max_retries: int = 4, backoff: float = 3.0, llm_override=None) -> str:
     """Generate a grounded financial answer from the query and context chunks."""
     context_text = "\n\n".join(context)
@@ -174,33 +192,63 @@ def generate(query: str, context: list[str], max_retries: int = 4, backoff: floa
         raise e
 
 
-def generate_stream(query: str, context: list[str], max_retries: int = 4, backoff: float = 3.0):
+def extract_stream_chunk_text(chunk) -> str:
+    """Robustly extracts string tokens across different LLM chunk representations."""
+    if isinstance(chunk, str):
+        return chunk
+    content = getattr(chunk, "content", chunk)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for p in content:
+            if isinstance(p, str):
+                parts.append(p)
+            elif isinstance(p, dict) and "text" in p:
+                parts.append(p["text"])
+        return "".join(parts)
+    return str(content)
+
+
+def generate_stream(query: str, context: list[str], max_retries: int = 4, backoff: float = 3.0, llm_override=None):
     """
     Streams answer tokens as they arrive.
     Used for measuring time-to-first-token (TTFT) and real-time streaming interfaces.
+    Always yields decoded string tokens.
     """
     context_text = "\n\n".join(context)
+    active_stream_chain = (prompt | llm_override | StrOutputParser()) if llm_override else chain
     import time
     for attempt in range(max_retries):
         try:
-            for chunk in chain.stream({"question": query, "context": context_text}):
-                if chunk:
-                    yield chunk
+            for chunk in active_stream_chain.stream({"question": query, "context": context_text}):
+                txt = extract_stream_chunk_text(chunk)
+                if txt:
+                    yield txt
             return
         except Exception as e:
-            if "429" in str(e) or "rate_limit" in str(e).lower():
-                sleep_s = backoff * (attempt + 1) + 2.0
-                print(f"[Generator] Rate limit (429) on stream. Backing off {sleep_s:.1f}s...")
+            gemini_fallback = get_gemini_chat_model()
+            if gemini_fallback and llm_override != gemini_fallback:
+                print(f"[Generator] Stream error ({e}). Fast fallback to Gemini stream...")
+                fallback_chain = prompt | gemini_fallback | StrOutputParser()
+                for chunk in fallback_chain.stream({"question": query, "context": context_text}):
+                    txt = extract_stream_chunk_text(chunk)
+                    if txt:
+                        yield txt
+                return
+            fallback_llm = get_groq_fallback()
+            if fallback_llm:
+                print(f"[Generator] SenseNova stream error ({e}). Falling back to Groq stream...")
+                fallback_chain = prompt | fallback_llm | StrOutputParser()
+                for chunk in fallback_chain.stream({"question": query, "context": context_text}):
+                    txt = extract_stream_chunk_text(chunk)
+                    if txt:
+                        yield txt
+                return
+            if attempt < max_retries - 1:
+                sleep_s = backoff * (attempt + 1) + 1.0
                 time.sleep(sleep_s)
             else:
-                fallback_llm = get_groq_fallback()
-                if fallback_llm:
-                    print(f"[Generator] SenseNova stream error ({e}). Falling back to Groq stream...")
-                    fallback_chain = prompt | fallback_llm | StrOutputParser()
-                    for chunk in fallback_chain.stream({"question": query, "context": context_text}):
-                        if chunk:
-                            yield chunk
-                    return
                 raise e
 
 

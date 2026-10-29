@@ -16,6 +16,7 @@ import time
 from dotenv import load_dotenv
 
 from financial_rag.rag_pipeline import RagPipeline
+from financial_rag.generator import get_gemini_chat_model
 
 load_dotenv()
 
@@ -60,13 +61,17 @@ def run(pipeline=None, verbose: bool = True) -> dict:
     if pipeline is None:
         pipeline = RagPipeline()
 
+    eval_llm = get_gemini_chat_model()
     tracker = ReliabilityTracker()
     if verbose:
         print(f"[Reliability Eval] Running {len(QUESTIONS)} questions x {REPEATS} repeats through retry wrapper...")
 
-    for q in QUESTIONS:
-        for _ in range(REPEATS):
-            call_with_retry(lambda query=q: pipeline.invoke(query), tracker)
+    for i, q in enumerate(QUESTIONS):
+        for rep in range(REPEATS):
+            res = call_with_retry(lambda query=q: pipeline.invoke(query, llm_override=eval_llm), tracker)
+            if verbose:
+                status = "PASS" if res else "FAIL"
+                print(f"  [{i+1}/{len(QUESTIONS)}] Rep {rep+1}/{REPEATS}: {status}")
 
     calls = tracker.calls or 1
     success_rate = (100.0 * tracker.successes) / calls

@@ -18,7 +18,7 @@ import os
 from dotenv import load_dotenv
 
 from financial_rag.rag_pipeline import RagPipeline
-from financial_rag.generator import measured_chain
+from financial_rag.generator import measure_query, get_gemini_chat_model
 
 load_dotenv()
 
@@ -41,11 +41,11 @@ USD_TO_INR = 88.0
 COST_BUDGET_PER_QUERY_USD = 0.0020
 
 
-def measure_tokens(pipeline: RagPipeline, question: str) -> dict:
+def measure_tokens(pipeline: RagPipeline, question: str, llm_override=None) -> dict:
     docs = pipeline.retriever.invoke(question)
     context_text = "\n\n".join(d.page_content for d in docs)
 
-    msg = measured_chain.invoke({"question": question, "context": context_text})
+    msg = measure_query(question, context_text, llm_override=llm_override)
     usage = getattr(msg, "usage_metadata", None) or {}
 
     input_tokens = usage.get("input_tokens") or (len(context_text) // 4 + len(question) // 4)
@@ -68,15 +68,18 @@ def run(pipeline=None, verbose: bool = True) -> dict:
     if pipeline is None:
         pipeline = RagPipeline()
 
+    eval_llm = get_gemini_chat_model()
     if verbose:
         print(f"[Cost Eval] Measuring token usage across {len(QUESTIONS)} financial queries...")
 
     rows = []
-    for q in QUESTIONS:
-        for _ in range(REPEATS):
-            tok = measure_tokens(pipeline, q)
+    for i, q in enumerate(QUESTIONS):
+        for rep in range(REPEATS):
+            tok = measure_tokens(pipeline, q, llm_override=eval_llm)
             c = compute_cost(tok)
             rows.append({**tok, "cost": c})
+            if verbose:
+                print(f"  [{i+1}/{len(QUESTIONS)}] Rep {rep+1}/{REPEATS}: {tok['input']} in, {tok['output']} out -> ${c:.6f}")
 
     n = len(rows)
     avg_in = sum(r["input"] for r in rows) / n if n else 0

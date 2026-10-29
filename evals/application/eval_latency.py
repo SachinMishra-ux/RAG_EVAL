@@ -19,7 +19,7 @@ import time
 from dotenv import load_dotenv
 
 from financial_rag.rag_pipeline import RagPipeline
-from financial_rag.generator import generate_stream
+from financial_rag.generator import generate_stream, get_gemini_chat_model
 
 load_dotenv()
 
@@ -65,7 +65,7 @@ def summarize_latency(samples: list[float]) -> dict:
     }
 
 
-def measure_stages_streaming(pipeline: RagPipeline, question: str):
+def measure_stages_streaming(pipeline: RagPipeline, question: str, llm_override=None):
     """Measures retrieval time, generation time, and perceived TTFT."""
     t0 = time.perf_counter()
     docs = pipeline.retriever.invoke(question)
@@ -74,7 +74,7 @@ def measure_stages_streaming(pipeline: RagPipeline, question: str):
 
     first_token_t = None
     pieces = []
-    for piece in generate_stream(question, context):
+    for piece in generate_stream(question, context, llm_override=llm_override):
         if first_token_t is None and piece.strip():
             first_token_t = time.perf_counter()
         pieces.append(piece)
@@ -98,22 +98,25 @@ def run(pipeline=None, verbose: bool = True) -> dict:
     if pipeline is None:
         pipeline = RagPipeline()
 
+    eval_llm = get_gemini_chat_model()
     if verbose:
         print(f"[Latency Eval] Warming up ({WARMUP_RUNS} runs, discarded)...")
     for i in range(WARMUP_RUNS):
-        pipeline.invoke(QUESTIONS[i % len(QUESTIONS)])
+        pipeline.invoke(QUESTIONS[i % len(QUESTIONS)], llm_override=eval_llm)
 
     totals, retrievals, generations, ttfts = [], [], [], []
     if verbose:
         print(f"[Latency Eval] Benchmarking {len(QUESTIONS)} questions x {REPEATS} iterations...")
 
-    for q in QUESTIONS:
-        for _ in range(REPEATS):
-            _, timing = measure_stages_streaming(pipeline, q)
+    for i, q in enumerate(QUESTIONS):
+        for rep in range(REPEATS):
+            _, timing = measure_stages_streaming(pipeline, q, llm_override=eval_llm)
             totals.append(timing["total"])
             retrievals.append(timing["retrieval"])
             generations.append(timing["generation"])
             ttfts.append(timing["ttft"])
+            if verbose:
+                print(f"  [{i+1}/{len(QUESTIONS)}] Rep {rep+1}/{REPEATS}: {timing['total']:6.1f}ms (TTFT: {timing['ttft']:6.1f}ms, Ret: {timing['retrieval']:5.1f}ms, Gen: {timing['generation']:6.1f}ms)")
 
     s_total = summarize_latency(totals)
     s_ttft = summarize_latency(ttfts)

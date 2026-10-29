@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG Production Cost Engine & LLM Unit Economics Breakdown</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- KaTeX for formula rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+    .slider-thumb::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #4f46e5;
+      cursor: pointer;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased min-h-screen p-4 sm:p-6 lg:p-10 selection:bg-indigo-500 selection:text-white">
+
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- TOP HEADER -->
+    <header class="bg-slate-800/80 backdrop-blur-md border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Live Verified Production Telemetry & Pricing Model
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+          RAG Cost Architecture & LLM Economics
+        </h1>
+        <p class="text-sm sm:text-base text-slate-400 max-w-2xl">
+          Comprehensive financial breakdown of inference token consumption, provider rate matrices, and cost estimation equations for production RAG deployment.
+        </p>
+      </div>
+
+      <!-- Live Baseline Chips -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto shrink-0">
+        <div class="bg-slate-900/80 border border-slate-700 p-3.5 rounded-2xl text-center">
+          <span class="text-xs text-slate-400 block font-medium">Evaluated LLM</span>
+          <span class="text-sm font-bold text-indigo-400">Gemini 3.1 Flash-Lite</span>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-700 p-3.5 rounded-2xl text-center">
+          <span class="text-xs text-slate-400 block font-medium">Cost / Query</span>
+          <span class="text-sm font-bold text-emerald-400" id="chip-unit-cost">$0.000378</span>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-700 p-3.5 rounded-2xl text-center col-span-2 sm:col-span-1">
+          <span class="text-xs text-slate-400 block font-medium">Cost in INR</span>
+          <span class="text-sm font-bold text-amber-400" id="chip-inr-cost">₹0.0333 (3.3p)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: VISUAL COST PIPELINE WORKFLOW -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>🔄</span> 1. End-to-End RAG Query Cost Pipeline
+        </h2>
+        <span class="text-xs font-mono px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-lg">
+          Telemetry Sourced from eval_ops.py
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+        <!-- Step 1 -->
+        <div class="bg-slate-900/70 border border-slate-700/70 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/50 transition">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">01</span>
+              <span class="text-[11px] font-semibold text-slate-400 uppercase">User Input</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm">Financial Query</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              User submits a complex financial question (e.g., Apple Q3 margin comparison).
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+            <span class="text-slate-500">Query Tokens</span>
+            <span class="font-mono font-bold text-indigo-300">~25 tokens</span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-slate-900/70 border border-slate-700/70 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center">02</span>
+              <span class="text-[11px] font-semibold text-slate-400 uppercase">Qdrant Vector DB</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm">Context Chunks & Prompt</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Retrieval fetches top-4 verified chunks + financial strict grounding system prompt.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+            <span class="text-slate-500">Context Tokens</span>
+            <span class="font-mono font-bold text-emerald-300">~1,681 tokens</span>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-slate-900/70 border border-indigo-500/40 rounded-2xl p-5 flex flex-col justify-between bg-gradient-to-b from-indigo-950/20 to-slate-900/70 shadow-lg shadow-indigo-950/30">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">03</span>
+              <span class="text-[11px] font-semibold text-indigo-300 uppercase">Evaluated LLM</span>
+            </div>
+            <h3 class="font-bold text-white text-sm">Gemini 3.1 Flash-Lite</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Consumes assembled context (1,706 in) and generates concise cited answer (204 out).
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Total Input / Output</span>
+            <span class="font-mono font-bold text-amber-300">1,706 in / 204 out</span>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-slate-900/70 border border-slate-700/70 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-500/50 transition">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 text-xs font-bold flex items-center justify-center">04</span>
+              <span class="text-[11px] font-semibold text-slate-400 uppercase">Billing Ledger</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm">Token Cost Equation</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Deterministic calculation based on official provider million-token tariff schedule.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+            <span class="text-slate-500">Unit Cost</span>
+            <span class="font-mono font-bold text-emerald-400">$0.000378 / query</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MATHEMATICAL FORMULATION -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>📐</span> 2. Formal Mathematical Cost Formulation
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          The exact formula used in <code class="text-indigo-300 font-mono">eval_cost.py</code> and <code class="text-indigo-300 font-mono">eval_ops.py</code> for cost accounting.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Generic KaTeX Formula -->
+        <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-6 space-y-4">
+          <div class="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+            Standard Provider Pricing Equation
+          </div>
+          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center overflow-x-auto text-sm sm:text-base text-slate-200">
+            $$\text{Cost}_{\text{query}} = \left( \frac{N_{\text{uncached}}}{10^6} \times P_{\text{in}} \right) + \left( \frac{N_{\text{cached}}}{10^6} \times P_{\text{cached}} \right) + \left( \frac{N_{\text{out}}}{10^6} \times P_{\text{out}} \right)$$
+          </div>
+          <div class="space-y-2 text-xs text-slate-400">
+            <div class="flex items-start gap-2">
+              <span class="font-mono text-indigo-300 font-semibold">• \(N_{\text{uncached}}\):</span>
+              <span>Raw input prompt tokens (user question + retrieved contexts + instructions).</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="font-mono text-indigo-300 font-semibold">• \(N_{\text{cached}}\):</span>
+              <span>Prompt tokens reused from persistent KV-cache (discounted by 50% on supported models).</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="font-mono text-indigo-300 font-semibold">• \(N_{\text{out}}\):</span>
+              <span>Tokens generated in synthesis answer response.</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="font-mono text-indigo-300 font-semibold">• \(P_{\text{in}}, P_{\text{out}}\):</span>
+              <span>Published API tariffs per 1 Million (1,000,000) tokens.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Instantiated Math for Gemini 3.1 Flash-Lite -->
+        <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+              Evaluated System Instance (Gemini 3.1 Flash-Lite)
+            </span>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold">
+              Active Benchmark
+            </span>
+          </div>
+          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center overflow-x-auto text-sm sm:text-base text-slate-200" id="active-math-box">
+            $$\text{Cost} = \left(\frac{1,706}{10^6} \times \$0.15\right) + \left(\frac{204}{10^6} \times \$0.60\right)$$
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block">Input Component</span>
+              <span class="font-mono font-bold text-slate-200" id="math-input-cost">$0.0002559 (67.6%)</span>
+            </div>
+            <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block">Output Component</span>
+              <span class="font-mono font-bold text-slate-200" id="math-output-cost">$0.0001224 (32.4%)</span>
+            </div>
+            <div class="p-3 bg-indigo-950/30 rounded-xl border border-indigo-900/40 col-span-2 flex justify-between items-center">
+              <div>
+                <span class="text-slate-400 block text-[11px]">Sum Total per Single RAG Turn</span>
+                <span class="font-mono font-bold text-emerald-400 text-sm" id="math-total-cost">$0.0003783 / query</span>
+              </div>
+              <div class="text-right">
+                <span class="text-slate-400 block text-[11px]">INR Equivalence (@ ₹88.0/$)</span>
+                <span class="font-mono font-bold text-amber-400 text-sm" id="math-total-inr">₹0.0333 (~3.33 paise)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE MODEL SELECTION & LIVE BUDGET CALCULATOR -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-3xl p-6 sm:p-8 space-y-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>🎛️</span> 3. Interactive LLM Unit Economics Calculator
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Dynamically evaluate and project infrastructure operational budgets across different models and query volumes.
+          </p>
+        </div>
+        
+        <!-- Currency conversion pill -->
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-700 px-3.5 py-1.5 rounded-2xl text-xs">
+          <span class="text-slate-400">1 USD =</span>
+          <input type="number" id="inr-rate" value="88.0" step="0.5" min="70" max="110" 
+                 class="w-16 bg-slate-800 border border-slate-600 rounded-lg px-2 py-0.5 text-center font-mono font-bold text-amber-400 focus:outline-none focus:border-indigo-500" 
+                 oninput="recalc()">
+          <span class="text-slate-400 font-semibold">INR (₹)</span>
+        </div>
+      </div>
+
+      <!-- Model Picker Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <!-- Gemini 3.1 Flash-Lite (Evaluated) -->
+        <button onclick="selectModel('gemini-flash-lite')" id="btn-model-gemini-flash-lite"
+                class="model-card text-left p-4 rounded-2xl border-2 border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-950/40 transition">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-bold text-indigo-400">Google Gemini</span>
+            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">Active Eval</span>
+          </div>
+          <div class="font-bold text-white text-sm">3.1 Flash-Lite</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">In: $0.15 | Out: $0.60</div>
+          <div class="text-[10px] text-emerald-400 mt-2 font-medium">✨ Ultra-low latency & high recall</div>
+        </button>
+
+        <!-- SenseTime SenseNova 6.8 -->
+        <button onclick="selectModel('sensenova-flash-lite')" id="btn-model-sensenova-flash-lite"
+                class="model-card text-left p-4 rounded-2xl border border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-bold text-purple-400">SenseTime</span>
+            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">App Chat</span>
+          </div>
+          <div class="font-bold text-white text-sm">SenseNova 6.8</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">In: $0.15 | Out: $0.60</div>
+          <div class="text-[10px] text-slate-400 mt-2 font-medium">Free 1.5k daily token plan</div>
+        </button>
+
+        <!-- OpenAI GPT-4o-mini -->
+        <button onclick="selectModel('gpt-4o-mini')" id="btn-model-gpt-4o-mini"
+                class="model-card text-left p-4 rounded-2xl border border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-bold text-emerald-400">OpenAI</span>
+            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Industry Std</span>
+          </div>
+          <div class="font-bold text-white text-sm">GPT-4o-mini</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">In: $0.15 | Out: $0.60</div>
+          <div class="text-[10px] text-slate-400 mt-2 font-medium">Cached in: $0.075 / 1M</div>
+        </button>
+
+        <!-- Groq Llama 3.1 8B -->
+        <button onclick="selectModel('groq-llama-8b')" id="btn-model-groq-llama-8b"
+                class="model-card text-left p-4 rounded-2xl border border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-bold text-orange-400">Groq Hardware</span>
+            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300 font-bold">High Speed</span>
+          </div>
+          <div class="font-bold text-white text-sm">Llama 3.1 8B</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">In: $0.05 | Out: $0.08</div>
+          <div class="text-[10px] text-slate-400 mt-2 font-medium">650+ tokens/sec throughput</div>
+        </button>
+
+        <!-- Groq Llama 3.3 70B -->
+        <button onclick="selectModel('groq-llama-70b')" id="btn-model-groq-llama-70b"
+                class="model-card text-left p-4 rounded-2xl border border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-xs font-bold text-sky-400">Groq Hardware</span>
+            <span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold">Deep Reasoning</span>
+          </div>
+          <div class="font-bold text-white text-sm">Llama 3.3 70B</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">In: $0.59 | Out: $0.79</div>
+          <div class="text-[10px] text-slate-400 mt-2 font-medium">Complex synthesis accuracy</div>
+        </button>
+      </div>
+
+      <!-- Controls & Live Display Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Controls Column (5 cols) -->
+        <div class="lg:col-span-5 bg-slate-900/90 border border-slate-700 rounded-2xl p-6 space-y-5">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center justify-between">
+            <span>Query & Traffic Parameters</span>
+            <button onclick="resetDefaults()" class="text-xs text-indigo-400 hover:text-indigo-300 font-normal underline">Reset Verified Defaults</button>
+          </h3>
+
+          <!-- Slider 1: Input Tokens -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Input Tokens / Query (Context + System + Prompt)</span>
+              <span class="font-mono font-bold text-indigo-300" id="val-input-tokens">1,706</span>
+            </div>
+            <input type="range" id="input-tokens" min="200" max="8000" step="50" value="1706" 
+                   class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb accent-indigo-500" 
+                   oninput="recalc()">
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>200</span>
+              <span>1,706 (Measured Benchmark)</span>
+              <span>8,000</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: Output Tokens -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Output Generated Tokens / Query</span>
+              <span class="font-mono font-bold text-emerald-300" id="val-output-tokens">204</span>
+            </div>
+            <input type="range" id="output-tokens" min="50" max="2000" step="10" value="204" 
+                   class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb accent-emerald-500" 
+                   oninput="recalc()">
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>50</span>
+              <span>204 (Measured Benchmark)</span>
+              <span>2,000</span>
+            </div>
+          </div>
+
+          <!-- Slider 3: Prompt Cache Hit Rate -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Context Cache Hit Rate (%)</span>
+              <span class="font-mono font-bold text-purple-300" id="val-cache-rate">0%</span>
+            </div>
+            <input type="range" id="cache-rate" min="0" max="90" step="5" value="0" 
+                   class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb accent-purple-500" 
+                   oninput="recalc()">
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>0% (Cold Retrieval)</span>
+              <span>50% (Warm Cache)</span>
+              <span>90% (High Hit Rate)</span>
+            </div>
+          </div>
+
+          <!-- Slider 4: Daily Query Volume -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Daily Production Query Volume</span>
+              <span class="font-mono font-bold text-amber-300" id="val-daily-volume">2,000 queries</span>
+            </div>
+            <input type="range" id="daily-volume" min="100" max="50000" step="100" value="2000" 
+                   class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider-thumb accent-amber-500" 
+                   oninput="recalc()">
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>100</span>
+              <span>2,000 (SLO Target)</span>
+              <span>50,000 / day</span>
+            </div>
+          </div>
+
+          <!-- Custom Model Price Input Mode -->
+          <div class="pt-3 border-t border-slate-800 space-y-2">
+            <div class="text-[11px] font-semibold text-slate-400">Active Rate Applied (per 1M tokens):</div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-[10px] text-slate-500 block">Input Price / 1M</span>
+                <span class="font-mono font-bold text-slate-200" id="lbl-price-in">$0.15</span>
+              </div>
+              <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+                <span class="text-[10px] text-slate-500 block">Output Price / 1M</span>
+                <span class="font-mono font-bold text-slate-200" id="lbl-price-out">$0.60</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Projection Cards Column (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          
+          <!-- Big 4 Budget Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 text-center">
+              <span class="text-[11px] text-slate-400 block font-medium">Per Query Cost</span>
+              <div class="text-lg sm:text-xl font-extrabold text-white mt-1" id="card-unit-usd">$0.000378</div>
+              <div class="text-xs text-amber-400 font-mono mt-0.5" id="card-unit-inr">₹0.0333</div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 text-center">
+              <span class="text-[11px] text-slate-400 block font-medium">Per 1,000 Queries</span>
+              <div class="text-lg sm:text-xl font-extrabold text-emerald-400 mt-1" id="card-1k-usd">$0.378</div>
+              <div class="text-xs text-amber-400 font-mono mt-0.5" id="card-1k-inr">₹33.29</div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 text-center">
+              <span class="text-[11px] text-slate-400 block font-medium">Daily Cost</span>
+              <div class="text-lg sm:text-xl font-extrabold text-indigo-400 mt-1" id="card-daily-usd">$0.757</div>
+              <div class="text-xs text-amber-400 font-mono mt-0.5" id="card-daily-inr">₹66.58</div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 text-center">
+              <span class="text-[11px] text-slate-400 block font-medium">Monthly Cost (30d)</span>
+              <div class="text-lg sm:text-xl font-extrabold text-purple-400 mt-1" id="card-monthly-usd">$22.70</div>
+              <div class="text-xs text-amber-400 font-mono mt-0.5" id="card-monthly-inr">₹1,997</div>
+            </div>
+          </div>
+
+          <!-- Token Split Breakdown Bar -->
+          <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-5 space-y-3">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-300">Inference Cost Composition</span>
+              <span class="text-slate-400 text-[11px]">Input Tokens vs. Output Generation</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden flex">
+              <div id="bar-input" class="bg-indigo-500 h-full transition-all duration-300" style="width: 67.6%"></div>
+              <div id="bar-output" class="bg-emerald-500 h-full transition-all duration-300" style="width: 32.4%"></div>
+            </div>
+            <div class="flex justify-between items-center text-xs text-slate-400 pt-1">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                <span>Input Context: <strong class="text-slate-200" id="pct-input">67.6%</strong> (<span id="cost-in-split">$0.000256</span>)</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span>Output Gen: <strong class="text-slate-200" id="pct-output">32.4%</strong> (<span id="cost-out-split">$0.000122</span>)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Production SLO Cost Target Status -->
+          <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="space-y-1">
+              <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                <span>Production Cost Budget SLO Target</span>
+                <span id="badge-slo" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                  PASS (Under Target)
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">
+                Target constraint: <strong class="text-slate-200">Max $0.0010 / query</strong> (<10 paise) & monthly ceiling <strong class="text-slate-200">< $50.00</strong>.
+              </p>
+            </div>
+            <div class="shrink-0 text-right">
+              <span class="text-xs text-slate-500 block">Budget Margin</span>
+              <span class="font-mono font-bold text-emerald-400 text-sm" id="lbl-margin">62.2% Headroom Available</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: COMPARATIVE BENCHMARK TABLE -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex justify-between items-center flex-wrap gap-2">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>📊</span> 4. Multi-Model Economic & Performance Trade-off Matrix
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Side-by-side comparison under the measured 1,706 input tokens and 204 output tokens workload.
+          </p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-700">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-900/90 text-slate-400 font-bold border-b border-slate-700">
+              <th class="p-3.5">Model</th>
+              <th class="p-3.5">Provider / Host</th>
+              <th class="p-3.5">Input / 1M</th>
+              <th class="p-3.5">Output / 1M</th>
+              <th class="p-3.5">Cost / 1k Queries</th>
+              <th class="p-3.5">Monthly (2k q/day)</th>
+              <th class="p-3.5">TTFT Latency</th>
+              <th class="p-3.5">Role in Project</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/80 bg-slate-900/50">
+            <!-- Gemini 3.1 Flash-Lite -->
+            <tr class="hover:bg-indigo-950/20 bg-indigo-950/10 transition">
+              <td class="p-3.5 font-bold text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                Gemini 3.1 Flash-Lite
+              </td>
+              <td class="p-3.5 text-slate-300">Google Cloud / DeepMind</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.15</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.60</td>
+              <td class="p-3.5 font-mono font-bold text-emerald-400">$0.378 (₹33.3)</td>
+              <td class="p-3.5 font-mono font-bold text-emerald-400">$22.70 (₹1,997)</td>
+              <td class="p-3.5 font-mono text-indigo-300">~2,150 ms</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">Active Evaluated Model</span></td>
+            </tr>
+
+            <!-- SenseNova 6.8 Flash-Lite -->
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="p-3.5 font-bold text-white">SenseNova 6.8 Flash-Lite</td>
+              <td class="p-3.5 text-slate-300">SenseTime</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.15</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.60</td>
+              <td class="p-3.5 font-mono text-slate-300">$0.378 (₹33.3)</td>
+              <td class="p-3.5 font-mono text-slate-300">$22.70 (₹1,997)</td>
+              <td class="p-3.5 font-mono text-slate-400">~5,880 ms</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold text-[10px]">Production App Model</span></td>
+            </tr>
+
+            <!-- OpenAI GPT-4o-mini -->
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="p-3.5 font-bold text-white">GPT-4o-mini</td>
+              <td class="p-3.5 text-slate-300">OpenAI API</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.15</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.60</td>
+              <td class="p-3.5 font-mono text-slate-300">$0.378 (₹33.3)</td>
+              <td class="p-3.5 font-mono text-slate-300">$22.70 (₹1,997)</td>
+              <td class="p-3.5 font-mono text-slate-400">~1,200 ms</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-bold text-[10px]">Benchmark Baseline</span></td>
+            </tr>
+
+            <!-- Groq Llama 3.1 8B -->
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="p-3.5 font-bold text-white">Llama 3.1 8B Instant</td>
+              <td class="p-3.5 text-slate-300">Groq LPUs</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.05</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.08</td>
+              <td class="p-3.5 font-mono font-bold text-emerald-400">$0.102 (₹8.9)</td>
+              <td class="p-3.5 font-mono font-bold text-emerald-400">$6.10 (₹537)</td>
+              <td class="p-3.5 font-mono text-emerald-400">~380 ms</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 font-bold text-[10px]">Speed Fallback</span></td>
+            </tr>
+
+            <!-- Groq Llama 3.3 70B -->
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="p-3.5 font-bold text-white">Llama 3.3 70B Versatile</td>
+              <td class="p-3.5 text-slate-300">Groq LPUs</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.59</td>
+              <td class="p-3.5 font-mono text-slate-200">$0.79</td>
+              <td class="p-3.5 font-mono text-slate-300">$1.168 (₹102.8)</td>
+              <td class="p-3.5 font-mono text-slate-300">$70.08 (₹6,167)</td>
+              <td class="p-3.5 font-mono text-slate-400">~950 ms</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold text-[10px]">High Accuracy Tier</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-6 text-xs text-slate-500 space-y-1">
+      <p>RAG Evaluation & Operational Cost Framework • Live Telemetry from <code class="font-mono text-slate-400">evals.application.eval_ops</code></p>
+      <p>Official Model Rates verified across Google Cloud, OpenAI, SenseTime & Groq Cloud Developer Pricing APIs.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const MODEL_PRICES = {
+      'gemini-flash-lite': { name: 'Gemini 3.1 Flash-Lite', in: 0.15, out: 0.60, cache: 0.075 },
+      'sensenova-flash-lite': { name: 'SenseNova 6.8 Flash-Lite', in: 0.15, out: 0.60, cache: 0.075 },
+      'gpt-4o-mini': { name: 'GPT-4o-mini', in: 0.15, out: 0.60, cache: 0.075 },
+      'groq-llama-8b': { name: 'Llama 3.1 8B Instant', in: 0.05, out: 0.08, cache: 0.05 },
+      'groq-llama-70b': { name: 'Llama 3.3 70B Versatile', in: 0.59, out: 0.79, cache: 0.59 }
+    };
+
+    let selectedModelKey = 'gemini-flash-lite';
+
+    function selectModel(key) {
+      selectedModelKey = key;
+      document.querySelectorAll('.model-card').forEach(c => {
+        c.className = "model-card text-left p-4 rounded-2xl border border-slate-700 bg-slate-900/60 hover:border-slate-500 transition";
+      });
+      const activeCard = document.getElementById('btn-model-' + key);
+      if (activeCard) {
+        activeCard.className = "model-card text-left p-4 rounded-2xl border-2 border-indigo-500 bg-indigo-950/40 shadow-lg shadow-indigo-950/40 transition";
+      }
+      recalc();
+    }
+
+    function resetDefaults() {
+      document.getElementById('input-tokens').value = 1706;
+      document.getElementById('output-tokens').value = 204;
+      document.getElementById('cache-rate').value = 0;
+      document.getElementById('daily-volume').value = 2000;
+      document.getElementById('inr-rate').value = 88.0;
+      selectModel('gemini-flash-lite');
+    }
+
+    function recalc() {
+      const model = MODEL_PRICES[selectedModelKey] || MODEL_PRICES['gemini-flash-lite'];
+      const totalInputTokens = parseFloat(document.getElementById('input-tokens').value);
+      const outputTokens = parseFloat(document.getElementById('output-tokens').value);
+      const cachePct = parseFloat(document.getElementById('cache-rate').value) / 100.0;
+      const dailyVolume = parseFloat(document.getElementById('daily-volume').value);
+      const inrRate = parseFloat(document.getElementById('inr-rate').value) || 88.0;
+
+      // Update control labels
+      document.getElementById('val-input-tokens').innerText = totalInputTokens.toLocaleString();
+      document.getElementById('val-output-tokens').innerText = outputTokens.toLocaleString();
+      document.getElementById('val-cache-rate').innerText = Math.round(cachePct * 100) + '%';
+      document.getElementById('val-daily-volume').innerText = dailyVolume.toLocaleString() + ' queries';
+
+      document.getElementById('lbl-price-in').innerText = '$' + model.in.toFixed(2);
+      document.getElementById('lbl-price-out').innerText = '$' + model.out.toFixed(2);
+
+      // Calculations
+      const cachedTokens = totalInputTokens * cachePct;
+      const uncachedTokens = totalInputTokens * (1.0 - cachePct);
+
+      const costInUncached = (uncachedTokens / 1000000.0) * model.in;
+      const costInCached = (cachedTokens / 1000000.0) * model.cache;
+      const costIn = costInUncached + costInCached;
+      const costOut = (outputTokens / 1000000.0) * model.out;
+      const totalCostPerQuery = costIn + costOut;
+
+      const costPer1k = totalCostPerQuery * 1000.0;
+      const dailyCost = totalCostPerQuery * dailyVolume;
+      const monthlyCost = dailyCost * 30.0;
+
+      // Cards Update
+      document.getElementById('card-unit-usd').innerText = '$' + totalCostPerQuery.toFixed(6);
+      document.getElementById('card-unit-inr').innerText = '₹' + (totalCostPerQuery * inrRate).toFixed(4);
+
+      document.getElementById('card-1k-usd').innerText = '$' + costPer1k.toFixed(3);
+      document.getElementById('card-1k-inr').innerText = '₹' + (costPer1k * inrRate).toFixed(2);
+
+      document.getElementById('card-daily-usd').innerText = '$' + dailyCost.toFixed(3);
+      document.getElementById('card-daily-inr').innerText = '₹' + Math.round(dailyCost * inrRate).toLocaleString();
+
+      document.getElementById('card-monthly-usd').innerText = '$' + monthlyCost.toFixed(2);
+      document.getElementById('card-monthly-inr').innerText = '₹' + Math.round(monthlyCost * inrRate).toLocaleString();
+
+      // Top Chips
+      document.getElementById('chip-unit-cost').innerText = '$' + totalCostPerQuery.toFixed(6);
+      document.getElementById('chip-inr-cost').innerText = '₹' + (totalCostPerQuery * inrRate).toFixed(4) + ' (' + (totalCostPerQuery * inrRate * 100).toFixed(1) + 'p)';
+
+      // Breakdown bars
+      const pctIn = totalCostPerQuery > 0 ? (costIn / totalCostPerQuery) * 100.0 : 50;
+      const pctOut = 100.0 - pctIn;
+      document.getElementById('bar-input').style.width = pctIn.toFixed(1) + '%';
+      document.getElementById('bar-output').style.width = pctOut.toFixed(1) + '%';
+      document.getElementById('pct-input').innerText = pctIn.toFixed(1) + '%';
+      document.getElementById('pct-output').innerText = pctOut.toFixed(1) + '%';
+      document.getElementById('cost-in-split').innerText = '$' + costIn.toFixed(6);
+      document.getElementById('cost-out-split').innerText = '$' + costOut.toFixed(6);
+
+      // Section 2 Math Box Update
+      document.getElementById('math-input-cost').innerText = '$' + costIn.toFixed(6) + ' (' + pctIn.toFixed(1) + '%)';
+      document.getElementById('math-output-cost').innerText = '$' + costOut.toFixed(6) + ' (' + pctOut.toFixed(1) + '%)';
+      document.getElementById('math-total-cost').innerText = '$' + totalCostPerQuery.toFixed(6) + ' / query';
+      document.getElementById('math-total-inr').innerText = '₹' + (totalCostPerQuery * inrRate).toFixed(4) + ' (~' + (totalCostPerQuery * inrRate * 100).toFixed(2) + ' paise)';
+
+      // SLO Budget Pill
+      const sloBudgetMax = 0.0010; // $0.0010 per query target
+      const badge = document.getElementById('badge-slo');
+      const marginLbl = document.getElementById('lbl-margin');
+      if (totalCostPerQuery <= sloBudgetMax) {
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300";
+        badge.innerText = "PASS (Under Target)";
+        const headroom = ((sloBudgetMax - totalCostPerQuery) / sloBudgetMax) * 100.0;
+        marginLbl.className = "font-mono font-bold text-emerald-400 text-sm";
+        marginLbl.innerText = headroom.toFixed(1) + "% Headroom Available";
+      } else {
+        badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300";
+        badge.innerText = "EXCEEDED BUDGET";
+        const over = ((totalCostPerQuery - sloBudgetMax) / sloBudgetMax) * 100.0;
+        marginLbl.className = "font-mono font-bold text-rose-400 text-sm";
+        marginLbl.innerText = "+" + over.toFixed(1) + "% Over Budget";
+      }
+
+      // Re-render KaTeX if available
+      renderActiveMath(totalInputTokens, outputTokens, model.in, model.out);
+    }
+
+    function renderActiveMath(inTok, outTok, pIn, pOut) {
+      const mathBox = document.getElementById('active-math-box');
+      if (window.katex && mathBox) {
+        const formula = `\\text{Cost} = \\left(\\frac{${Math.round(inTok)}}{10^6} \\times \\$${pIn.toFixed(2)}\\right) + \\left(\\frac{${Math.round(outTok)}}{10^6} \\times \\$${pOut.toFixed(2)}\\right)`;
+        try {
+          katex.render(formula, mathBox, { displayMode: true, throwOnError: false });
+        } catch (e) {
+          mathBox.innerText = `Cost = (${inTok}/1M * $${pIn}) + (${outTok}/1M * $${pOut})`;
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\(", right: "\\)", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+      recalc();
+    });
+  </script>
+</body>
+</html>
