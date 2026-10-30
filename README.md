@@ -522,18 +522,67 @@ python -m evals.compare
 
 ## 🛰️ Step 9: Continuous Production Monitoring (Online Evals)
 
-Offline evaluations with golden datasets must be paired with continuous online monitoring.
+Offline evaluations using curated golden datasets must be paired with continuous online monitoring in production. While offline tests catch regressions before release, **Online Evaluation** monitors unseen questions asked by real humans in live traffic.
 
-`evals/application/eval_online.py` runs as a production background daemon:
+Because real user queries have no pre-written ground truth labels, the online engine evaluates live transactions using **Reference-Free Metrics** (The RAG Triad):
+- **Faithfulness**: Did the LLM hallucinate, or was the answer strictly grounded in the retrieved filing context?
+- **Answer Relevancy**: Did the answer address the customer's actual query without going off-topic?
+- **Contextual Relevancy**: Did the vector database retrieve relevant excerpts or noisy, extraneous text?
 
-1. Long-polls live execution traces from **LangSmith**.
-2. Deterministically samples traffic (default: 30%) to manage LLM judge costs.
-3. Evaluates sampled production turns against the **RAG Triad** (`Faithfulness`, `Answer Relevancy`, `Contextual Relevancy`).
-4. Logs feedback scores and natural language justifications back to the trace spans.
+### 1. How the Online Daemon Works (`evals/application/eval_online.py`)
 
+1. **Telemetry Streaming**: The application uses LangSmith's `@traceable` decorator to stream input queries, retrieved chunks, and generated answers asynchronously without adding user latency.
+2. **Daemon Polling**: `eval_online.py` runs as an active background watcher, waking up every 60 seconds to inspect the `financial-rag-production` project in LangSmith.
+3. **Deterministic Sampling**: Applies a hash-salted modulo algorithm (`hash(run_id) % 100 < 30`) to evaluate **30% of traffic**, controlling LLM judge API costs.
+4. **LLM Judge Evaluation**: Automatically runs DeepEval metrics using **Gemini 3.1 Flash-Lite** with concurrency controls and retry backoffs.
+5. **Feedback Ledger**: Writes metric scores (0.00 to 1.00) and natural language justifications directly back to the LangSmith trace spans via `client.create_feedback()`.
+
+### 2. Live Testing & Verification (Dual-Terminal Setup)
+
+You can verify the end-to-end online evaluation pipeline in real time:
+
+#### Terminal 1: Launch the Background Monitor Daemon
 ```bash
 python -m evals.application.eval_online
 ```
+*The daemon will initialize the LLM judge, verify project connectivity, and begin polling every 60 seconds.*
+
+#### Terminal 2: Send Test Queries Through the RAG Pipeline
+Use the provided interactive query runner [`scripts/ask_query.py`](file:///Users/sachinmishra/Desktop/RAG_EVAL/scripts/ask_query.py):
+```bash
+# Query 1: EY attractive employer ranking
+python scripts/ask_query.py "What ranking did EY achieve as an attractive employer?"
+
+# Query 2: JPMorgan net income and revenue
+python scripts/ask_query.py "What was JPMorgan net income and revenue in 2023?"
+```
+
+#### Terminal 1 Output:
+Within 60 seconds, Terminal 1 will detect the new root trace, run reference-free evaluation, and log feedback scores:
+```text
+[Online Eval] Checking live production traces for project: 'financial-rag-production'...
+[Online Eval] Found 2 recent root trace(s). Evaluating sampled runs...
+  ⚡ Evaluating faithfulness on trace 01a18bec-5c03-79d1...
+  ✅ Logged faithfulness score=1.00 to LangSmith
+  ⚡ Evaluating answer_relevancy on trace 01a18bec-5c03-79d1...
+  ✅ Logged answer_relevancy score=1.00 to LangSmith
+  ⚡ Evaluating contextual_relevancy on trace 01a18bec-5c03-79d1...
+  ✅ Logged contextual_relevancy score=0.85 to LangSmith
+[Online Eval] Sleeping for 60s before next poll cycle (Ctrl+C to stop)...
+```
+
+### 3. Viewing Traces in the LangSmith Web Dashboard
+
+All live telemetry, input queries, vector chunks, LLM prompts, token usages, and RAG Triad feedback tags can be inspected directly in your project:
+
+👉 **[LangSmith Project Dashboard: financial-rag-production](https://smith.langchain.com/o/0ead21e1-e053-4b17-8517-f5f4c907298d/projects/p/95bdc1b5-64a0-4575-b177-b1f99b67114a)**
+
+### 4. Interactive HTML Architecture Visualizations
+
+Comprehensive, interactive visualizations are available to inspect the mechanics of both unit economics and online telemetry:
+* **Cost & LLM Economics Engine**: [`cost_visualization.html`](file:///Users/sachinmishra/Desktop/cost_visualization.html) (Live sliders for input/output tokens, daily query volume, exchange rates, and multi-model cost comparisons).
+* **Online Evaluation Architecture**: [`online_eval_visualization.html`](file:///Users/sachinmishra/Desktop/online_eval_visualization.html) (Lifecycle workflow diagrams, sampling logic, and live dashboard links).
+* **Presentation Slide Deck**: Located at `rag_evaluation/index.html` on GitHub Pages.
 
 ---
 

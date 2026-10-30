@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Production Evaluation & Continuous LangSmith Monitoring</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 4px; }
+    .pulse-glow { animation: pulseGlow 2s infinite; }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.04); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen p-4 sm:p-6 lg:p-10 selection:bg-indigo-500 selection:text-white">
+
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- TOP HEADER -->
+    <header class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          Live Production Continuous Monitoring Architecture
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+          Online Evaluation & LangSmith Guardrail Telemetry
+        </h1>
+        <p class="text-sm sm:text-base text-slate-400 max-w-2xl">
+          Real-time telemetry, asynchronous trace sampling, automated RAG Triad judge scoring, and feedback logging in live production environments.
+        </p>
+      </div>
+
+      <!-- Live Monitoring Status Badges -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto shrink-0">
+        <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-2xl text-center">
+          <span class="text-[11px] text-slate-400 block font-medium">Trace Destination</span>
+          <span class="text-xs font-bold text-indigo-400 font-mono">financial-rag-production</span>
+        </div>
+        <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-2xl text-center">
+          <span class="text-[11px] text-slate-400 block font-medium">Sampling Rate</span>
+          <span class="text-xs font-bold text-emerald-400">30% (Hash-Salted)</span>
+        </div>
+        <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-2xl text-center col-span-2 sm:col-span-1">
+          <span class="text-[11px] text-slate-400 block font-medium">Judge LLM</span>
+          <span class="text-xs font-bold text-amber-400">Gemini 3.1 Flash-Lite</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: WHAT IS ONLINE EVALUATION (VS OFFLINE) -->
+    <section class="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>⚖️</span> 1. Offline vs. Online Evaluation: Conceptual Foundation
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          Understanding why offline CI/CD regression suites and continuous online monitoring are both essential.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Offline Card -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+              <span>🧪</span> Offline Evaluation (Pre-Deployment)
+            </span>
+            <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded font-mono">
+              Deterministic CI/CD
+            </span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Evaluates the system against a static <strong>Golden Ground-Truth Dataset</strong> before merging code or deploying to production.
+          </p>
+          <ul class="text-xs space-y-2 text-slate-400">
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400">✔</span>
+              <span><strong>Data source:</strong> Static JSON goldens with pre-verified answers.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400">✔</span>
+              <span><strong>Execution:</strong> Triggered via git hooks or pre-push test suites.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400">✔</span>
+              <span><strong>Goal:</strong> Prevent regressions in recall, precision, and safety prior to release.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Online Card -->
+        <div class="bg-slate-950/70 border border-cyan-500/30 rounded-2xl p-6 space-y-4 shadow-lg shadow-cyan-950/20">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+              <span>🛰️</span> Online Evaluation (Live Production Monitoring)
+            </span>
+            <span class="text-[10px] bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded font-mono">
+              Continuous Telemetry
+            </span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Continuously monitors <strong>unseen queries from real humans</strong>. Because there are no pre-written ground truth labels, it evaluates live outputs using <strong>Reference-Free Metrics</strong>.
+          </p>
+          <ul class="text-xs space-y-2 text-slate-400">
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400">✔</span>
+              <span><strong>Data source:</strong> Live user requests streamed to LangSmith.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400">✔</span>
+              <span><strong>Execution:</strong> Asynchronous background daemon (does not block user responses).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400">✔</span>
+              <span><strong>Goal:</strong> Detect production hallucinations, drift, and relevance drop-offs.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: END-TO-END ONLINE MONITORING WORKFLOW -->
+    <section class="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>🔄</span> 2. The 5-Stage Online Evaluation Lifecycle
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          How live financial questions move from user prompts to LangSmith telemetry, async judge scoring, and feedback logging.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3.5">
+        <!-- Stage 1 -->
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">1</span>
+              <span class="text-[10px] font-semibold text-slate-500 uppercase">Live Request</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-xs">User Asks Question</h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Real human asks a query (e.g. <em>"What ranking did EY achieve?"</em>).
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-slate-500 font-mono">
+            Zero added latency
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">2</span>
+              <span class="text-[10px] font-semibold text-slate-500 uppercase">Telemetry Hook</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-xs">@traceable Ingestion</h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              LangSmith intercepts input, retrieved chunks, and generated answer in the background.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-emerald-400 font-mono">
+            Async HTTP POST
+          </div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-4 flex flex-col justify-between bg-gradient-to-b from-cyan-950/20 to-slate-950/80">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-6 h-6 rounded-lg bg-cyan-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+              <span class="text-[10px] font-semibold text-cyan-300 uppercase">Monitor Daemon</span>
+            </div>
+            <h3 class="font-bold text-white text-xs">eval_online.py Poller</h3>
+            <p class="text-[11px] text-slate-300 leading-relaxed">
+              Polls every 60s. Applies hash-salt to sample 30% of traffic, protecting evaluation budgets.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-cyan-300 font-mono">
+            Poll cycle: 60s
+          </div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 text-xs font-bold flex items-center justify-center">4</span>
+              <span class="text-[10px] font-semibold text-slate-500 uppercase">RAG Triad Judge</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-xs">Gemini Flash-Lite</h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Evaluates Faithfulness, Answer Relevancy, and Contextual Relevancy with natural explanations.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-amber-400 font-mono">
+            Reference-Free Scoring
+          </div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center">5</span>
+              <span class="text-[10px] font-semibold text-slate-500 uppercase">Feedback Ledger</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-xs">LangSmith Dashboard</h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Scores (0.0 to 1.0) and reasoning are attached to the trace in your online portal.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-emerald-400 font-mono">
+            create_feedback()
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE THREE RAG TRIAD ONLINE METRICS -->
+    <section class="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>📐</span> 3. The Online RAG Triad Metrics
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          How each live trace is judged without needing human-written ideal answers.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Metric 1: Faithfulness -->
+        <div class="bg-slate-950/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-emerald-400 uppercase">1. Faithfulness</span>
+            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">Hallucination Guard</span>
+          </div>
+          <div class="font-mono text-xs text-indigo-300">Context ⟷ Answer</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Checks if every factual claim made in the generated answer is directly grounded in the retrieved chunks.
+          </p>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-[11px] text-slate-400 font-mono">
+            Score = Claims Grounded / Total Claims
+          </div>
+        </div>
+
+        <!-- Metric 2: Answer Relevancy -->
+        <div class="bg-slate-950/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-amber-400 uppercase">2. Answer Relevancy</span>
+            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">Quality Guard</span>
+          </div>
+          <div class="font-mono text-xs text-amber-300">Question ⟷ Answer</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Verifies that the generated response directly answers the user's specific question without wandering off-topic.
+          </p>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-[11px] text-slate-400 font-mono">
+            Score = Relevant Points / Target Points
+          </div>
+        </div>
+
+        <!-- Metric 3: Contextual Relevancy -->
+        <div class="bg-slate-950/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-purple-400 uppercase">3. Contextual Relevancy</span>
+            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">Noise Guard</span>
+          </div>
+          <div class="font-mono text-xs text-purple-300">Question ⟷ Context</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Measures whether the vector database retrieved chunks that actually pertain to the question or pulled irrelevant noise.
+          </p>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-[11px] text-slate-400 font-mono">
+            Score = Pertinent Sentences / Total Sentences
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: HOW TO TEST AND VERIFY STEP-BY-STEP -->
+    <section class="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="space-y-1">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>💻</span> 4. Interactive Testing Guide
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          Run your live dual-terminal setup to watch queries get traced and evaluated in real time.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Terminal 1 -->
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-cyan-400 font-mono">Terminal 1: Online Daemon</span>
+            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded">Continuous Watcher</span>
+          </div>
+          <div class="p-3.5 bg-black rounded-xl font-mono text-xs text-slate-200 overflow-x-auto border border-slate-800">
+            python -m evals.application.eval_online
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Keeps running in the background. Polls LangSmith every 60s, evaluates new sampled queries, and logs feedback tags.
+          </p>
+        </div>
+
+        <!-- Terminal 2 -->
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-emerald-400 font-mono">Terminal 2: Send Live Query</span>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Query Tester</span>
+          </div>
+          <div class="p-3.5 bg-black rounded-xl font-mono text-xs text-slate-200 overflow-x-auto border border-slate-800">
+            python scripts/ask_query.py "What ranking did EY achieve?"
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Sends an immediate question through the pipeline, prints the answer, and transmits the trace to LangSmith.
+          </p>
+        </div>
+      </div>
+
+      <!-- LangSmith Direct Link Card -->
+      <div class="p-5 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <span class="text-xs font-bold text-white block">View Real Telemetry in LangSmith</span>
+          <span class="text-xs text-slate-400">Open your direct project link to inspect raw inputs, chunks, LLM prompts, and feedback tags:</span>
+        </div>
+        <a href="https://smith.langchain.com/o/0ead21e1-e053-4b17-8517-f5f4c907298d/projects/p/95bdc1b5-64a0-4575-b177-b1f99b67114a" target="_blank"
+           class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition shrink-0">
+          Open LangSmith Project &rarr;
+        </a>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
