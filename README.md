@@ -525,6 +525,7 @@ python -m evals.compare
 Offline evaluations using curated golden datasets must be paired with continuous online monitoring in production. While offline tests catch regressions before release, **Online Evaluation** monitors unseen questions asked by real humans in live traffic.
 
 Because real user queries have no pre-written ground truth labels, the online engine evaluates live transactions using **Reference-Free Metrics** (The RAG Triad):
+
 - **Faithfulness**: Did the LLM hallucinate, or was the answer strictly grounded in the retrieved filing context?
 - **Answer Relevancy**: Did the answer address the customer's actual query without going off-topic?
 - **Contextual Relevancy**: Did the vector database retrieve relevant excerpts or noisy, extraneous text?
@@ -542,13 +543,17 @@ Because real user queries have no pre-written ground truth labels, the online en
 You can verify the end-to-end online evaluation pipeline in real time:
 
 #### Terminal 1: Launch the Background Monitor Daemon
+
 ```bash
 python -m evals.application.eval_online
 ```
+
 *The daemon will initialize the LLM judge, verify project connectivity, and begin polling every 60 seconds.*
 
 #### Terminal 2: Send Test Queries Through the RAG Pipeline
+
 Use the provided interactive query runner [`scripts/ask_query.py`](file:///Users/sachinmishra/Desktop/RAG_EVAL/scripts/ask_query.py):
+
 ```bash
 # Query 1: EY attractive employer ranking
 python scripts/ask_query.py "What ranking did EY achieve as an attractive employer?"
@@ -558,7 +563,9 @@ python scripts/ask_query.py "What was JPMorgan net income and revenue in 2023?"
 ```
 
 #### Terminal 1 Output:
+
 Within 60 seconds, Terminal 1 will detect the new root trace, run reference-free evaluation, and log feedback scores:
+
 ```text
 [Online Eval] Checking live production traces for project: 'financial-rag-production'...
 [Online Eval] Found 2 recent root trace(s). Evaluating sampled runs...
@@ -580,6 +587,7 @@ All live telemetry, input queries, vector chunks, LLM prompts, token usages, and
 ### 4. Interactive HTML Architecture Visualizations
 
 Comprehensive, interactive visualizations are available to inspect the mechanics of both unit economics and online telemetry:
+
 * **Cost & LLM Economics Engine**: [`cost_visualization.html`](file:///Users/sachinmishra/Desktop/cost_visualization.html) (Live sliders for input/output tokens, daily query volume, exchange rates, and multi-model cost comparisons).
 * **Online Evaluation Architecture**: [`online_eval_visualization.html`](file:///Users/sachinmishra/Desktop/online_eval_visualization.html) (Lifecycle workflow diagrams, sampling logic, and live dashboard links).
 * **Presentation Slide Deck**: Located at `rag_evaluation/index.html` on GitHub Pages.

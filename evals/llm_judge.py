@@ -32,7 +32,7 @@ class GeminiJudge(DeepEvalBaseLLM):
         from google import genai
         self.client = genai.Client(api_key=api_key)
         self._semaphore = None
-        self.fallback_models = ["gemini-flash-lite-latest", "gemini-2.5-flash"]
+        self.fallback_models = ["gemini-3.1-flash", "gemini-2.5-flash"]
 
     def _get_semaphore(self):
         if self._semaphore is None:

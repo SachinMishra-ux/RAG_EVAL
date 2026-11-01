@@ -1,37 +1,37 @@
 [
   {
     "id": "g_synth_001",
-    "query": "What was the Corporate & Investment Bank's net income and revenue in 2023?",
-    "ideal_answer": "$14 billion of net income on revenue of $49 billion",
+    "query": "How much did Bank of America agree to pay for FleetBoston Financial Corp. in the biggest deal of 2003?",
+    "ideal_answer": "more than $40 billion",
     "source": "JPM_Annual_2023.pdf",
-    "context_sample": "2023 Highlights CORPORATE & INVESTMENT BANK Generated $14 billion of net income on revenue of $49 billion IN DEPOSITS AND FOR SMALL BUSINESSES Named #1 in retail deposit market share and #1 primary ba..."
+    "context_sample": ". Now headquartered in Chicago, the new Bank One became the largest bank in the Midwest, second largest among credit card companies and fourth largest in the United States. But the merger didn’t go as..."
   },
   {
     "id": "g_synth_002",
-    "query": "What percentage of Asset Management AUM was managed by female and/or diverse portfolio managers?",
-    "ideal_answer": "54% of Asset Management AUM was managed by female and/or diverse portfolio managers.",
+    "query": "How many active digital customers does the bank have?",
+    "ideal_answer": "67 million",
     "source": "JPM_Annual_2023.pdf",
-    "context_sample": "client asset flows in 2023 across all regions and channels, with strength in liquidity, fixed income, equity, custody and brokerage  #2 in Active ETF AUM and flows  #1 in Institutional Money Market ..."
+    "context_sample": ". consumers and 6.4 million small businesses  67 million active digital customers8, including 54 million active mobile customers9  Primary bank relationships for ~80% of consumer checking accounts ..."
   },
   {
     "id": "g_synth_003",
-    "query": "What position has JPMorgan Chase achieved by market capitalization?",
-    "ideal_answer": "#1 bank by market capitalization.",
-    "source": "JPM_Annual_2023.pdf",
-    "context_sample": ". Our bank has now emerged as the #1 bank by market capitalization. Each of our businesses is among the best in the world, with increased market share, strong financial results and an unwavering focus..."
+    "query": "How much has EY globally invested in next-generation Assurance platforms?",
+    "ideal_answer": "over DKK 10 billion",
+    "source": "EY_Financial_report_2025.pdf",
+    "context_sample": ". Globally, EY has invested over DKK 10 billion in next-generation Assurance platforms, integrating AI at scale, advanced analytics and intuitive user experiences. Tools like EY Canvas, EY Helix and I..."
   },
   {
     "id": "g_synth_004",
-    "query": "How many of the 100 sub-custodian locations are managed directly by JPMorgan Chase?",
-    "ideal_answer": "13 of these sub-custodians are managed directly by JPMorgan Chase.",
-    "source": "JPM_SE_Annual_2023.pdf",
-    "context_sample": "19 ManageMent RepoRt sinki, Luxembourg, Oslo, Stockholm and the Headquarters in Frankfurt. Our range of products covers custody and depositary services, fund services consisting of fund accounting, tr..."
+    "query": "What does our expert team deliver?",
+    "ideal_answer": "insights and solutions for informed decision-making, compliance, and risk mitigation",
+    "source": "EY_Financial_report_2025.pdf",
+    "context_sample": ". Our expert team delivers insights and solutions for informed decision-making, compliance, and risk mitigation. By leveraging advanced technology and AI, we enhance our service delivery with real-tim..."
   },
   {
     "id": "g_synth_005",
-    "query": "Who is the Vice Chair and has been a member of the board since 2019?",
-    "ideal_answer": "Mona Blønd Mona (born 1963) is Vice Chair and has been a member of the board since 2019.",
-    "source": "EY_Financial_report_2025.pdf",
-    "context_sample": ". Carina is also Head of Tax & Law at Nordic level. Mona Blønd Mona (born 1963) is Vice Chair and has been a member of the board since 2019. Mona is a state authorized public accountant. Mona has more..."
+    "query": "How many people did the company directly hire to redeploy individuals whose jobs were lost because of the merger?",
+    "ideal_answer": "over 5,000 people",
+    "source": "JPM_Annual_2023.pdf",
+    "context_sample": ". We did everything we could to redeploy individuals whose jobs were lost because of the merger (we directly hired over 5,000 people). Our approach has always been to go into an acquisition knowing we..."
   }
 ]
